@@ -1,0 +1,340 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------
+   Tokens (RGB channels). Light is the default; .dark on <html> swaps.
+   Azul Domus #0D223F is the same navy used by the web-admin product.
+------------------------------------------------------------------- */
+:root {
+  --c-bg: 243 246 250;          /* niebla #F3F6FA */
+  --c-surface: 255 255 255;
+  --c-surface-2: 236 241 247;   /* #ECF1F7 */
+  --c-ink: 13 34 63;            /* Azul Domus, headings */
+  --c-body: 58 76 102;          /* #3A4C66 */
+  --c-muted: 94 112 138;        /* #5E708A */
+  --c-line: 220 227 238;        /* #DCE3EE */
+  --c-cobalt: 36 88 230;        /* #2458E6 */
+  --c-emerald: 16 185 129;      /* #10B981 */
+  --c-emerald-ink: 4 120 87;    /* #047857, emerald text on light */
+  --c-amber: 217 154 43;        /* #D99A2B, cartera en mora */
+  --c-danger: 190 50 40;        /* #BE3228, form errors */
+  --c-navy: 13 34 63;
+  --c-navy-deep: 7 21 39;
+  --c-navy-raised: 22 48 86;
+  --c-window: 30 58 95;         /* ventana apagada */
+  color-scheme: light;
+}
+
+.dark {
+  --c-bg: 8 22 41;              /* #081629 */
+  --c-surface: 14 32 58;        /* #0E203A */
+  --c-surface-2: 19 41 72;      /* #132948 */
+  --c-ink: 232 238 247;
+  --c-body: 184 198 219;
+  --c-muted: 138 158 186;
+  --c-line: 32 56 92;
+  --c-cobalt: 120 158 255;
+  --c-emerald: 22 199 140;
+  --c-emerald-ink: 52 211 153;
+  --c-amber: 230 170 64;
+  --c-danger: 252 129 116;
+  --c-navy: 10 28 52;
+  --c-navy-deep: 5 15 29;
+  --c-navy-raised: 20 42 76;
+  --c-window: 28 52 86;
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-bg text-body antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-ink;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--c-cobalt));
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  .on-navy :focus-visible {
+    outline-color: rgb(var(--c-emerald));
+  }
+
+  ::selection {
+    background: rgb(var(--c-emerald) / 0.3);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Liquid glass. A translucent material that blurs and saturates what
+   is behind it, with a specular rim. Used only where there is something
+   real behind it: the skyline, photos, or page content under the
+   floating navbar. Plain light sections use solid surfaces instead.
+   In the components layer so utilities (position, radius) override it.
+------------------------------------------------------------------- */
+@layer components {
+  .glass {
+    --glass-a: rgb(255 255 255 / 0.66);
+    --glass-b: rgb(255 255 255 / 0.4);
+    --glass-rim: rgb(255 255 255 / 0.9);
+    --glass-rim-2: rgb(255 255 255 / 0.3);
+    --glass-blur: 22px;
+    --glass-shadow: 0 12px 36px -16px rgb(13 34 63 / 0.3), 0 2px 6px -2px rgb(13 34 63 / 0.06);
+    --glass-inset: inset 0 1px 0 rgb(255 255 255 / 0.9), inset 0 -1px 0 rgb(255 255 255 / 0.3);
+    position: relative;
+    isolation: isolate;
+    background: linear-gradient(165deg, var(--glass-a), var(--glass-b));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(175%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(175%);
+    box-shadow: var(--glass-shadow), var(--glass-inset);
+  }
+
+  /* Specular rim: brighter on the lit corner, fading across the edge */
+  .glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: linear-gradient(135deg, var(--glass-rim), transparent 38%, transparent 62%, var(--glass-rim-2));
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  .dark .glass,
+  .glass-navy {
+    --glass-a: rgb(52 86 138 / 0.42);
+    --glass-b: rgb(14 32 58 / 0.34);
+    --glass-rim: rgb(255 255 255 / 0.34);
+    --glass-rim-2: rgb(255 255 255 / 0.08);
+    --glass-shadow: 0 16px 40px -16px rgb(2 8 20 / 0.6);
+    --glass-inset: inset 0 1px 0 rgb(255 255 255 / 0.16), inset 0 -1px 0 rgb(255 255 255 / 0.04);
+  }
+
+  /* Denser glass where legibility matters: forms, documents */
+  .glass-strong {
+    --glass-a: rgb(255 255 255 / 0.86);
+    --glass-b: rgb(255 255 255 / 0.72);
+  }
+
+  .dark .glass-strong {
+    --glass-a: rgb(22 44 78 / 0.82);
+    --glass-b: rgb(14 32 58 / 0.76);
+  }
+
+  /* Chromium only (class set by <GlassEffects/>): lens refraction at the
+     edges through the SVG filter #lg-refract. Other browsers keep blur. */
+  .lg-refract .glass-refract {
+    -webkit-backdrop-filter: url(#lg-refract) blur(var(--glass-blur)) saturate(175%);
+    backdrop-filter: url(#lg-refract) blur(var(--glass-blur)) saturate(175%);
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Architectural plan grid behind the hero */
+  .blueprint {
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 70% at 70% 40%, #000 30%, transparent 75%);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Motion. One orchestrated moment on load (hero rises, then the
+   conjunto's windows switch on floor by floor). Everything else
+   answers a person's action.
+------------------------------------------------------------------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes window-on {
+  from {
+    background-color: rgb(var(--c-window));
+    box-shadow: none;
+  }
+}
+
+@keyframes window-paid {
+  0% {
+    background-color: rgb(var(--c-window));
+    box-shadow: 0 0 0 0 rgb(var(--c-emerald) / 0.9);
+  }
+  35% {
+    background-color: rgb(var(--c-emerald));
+    box-shadow: 0 0 0 6px rgb(var(--c-emerald) / 0.35);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgb(var(--c-emerald) / 0);
+  }
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-rise {
+  animation: rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.window-lit {
+  animation: window-on 520ms ease-out var(--d, 0ms) backwards;
+}
+
+.window-just-paid {
+  animation: window-paid 1100ms ease-out both;
+}
+
+.animate-enter {
+  animation: enter 360ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.animate-slide-in {
+  animation: slide-in 320ms ease-out both;
+}
+
+/* Page change: content settles in under the floating navbar */
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-page {
+  animation: page-in 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Accordion: animates height via grid rows */
+.collapsible {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 280ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.collapsible[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+
+.collapsible > * {
+  overflow: hidden;
+}
+
+/* Native range input, styled to the palette */
+.range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    rgb(var(--c-emerald)) 0%,
+    rgb(var(--c-emerald)) var(--fill, 0%),
+    rgb(var(--c-line)) var(--fill, 0%)
+  );
+  cursor: pointer;
+}
+
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgb(var(--c-surface));
+  border: 2px solid rgb(var(--c-emerald));
+  box-shadow: 0 2px 6px rgb(13 34 63 / 0.2);
+  transition: transform 150ms ease;
+}
+
+.range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgb(var(--c-surface));
+  border: 2px solid rgb(var(--c-emerald));
+  box-shadow: 0 2px 6px rgb(13 34 63 / 0.2);
+}
+
+.range:active::-webkit-slider-thumb {
+  transform: scale(1.12);
+}
+
+dialog::backdrop {
+  background: rgb(4 12 26 / 0.7);
+  backdrop-filter: blur(6px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+  }
+}
