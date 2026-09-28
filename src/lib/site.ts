@@ -13,11 +13,11 @@ export const site = {
     "Gestión transparente, pagos en línea, control de accesos y convivencia en una sola plataforma adaptada a la Propiedad Horizontal en Colombia.",
   residentsUrl: env(process.env.NEXT_PUBLIC_RESIDENTS_URL, "https://app.domuscol.me/login"),
   /** Digits only, with country code (57 for Colombia). */
-  whatsappNumber: env(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER, "573000000000"),
-  whatsappLabel: env(process.env.NEXT_PUBLIC_WHATSAPP_LABEL, "+57 300 000 0000"),
+  whatsappNumber: env(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER, "573239377429"),
+  whatsappLabel: env(process.env.NEXT_PUBLIC_WHATSAPP_LABEL, "+57 323 937 7429"),
   whatsappMessage: "Hola, quiero información de DomusCol para mi conjunto.",
   supportEmail: env(process.env.NEXT_PUBLIC_SUPPORT_EMAIL, "soporte@domuscol.me"),
-  salesEmail: env(process.env.NEXT_PUBLIC_SALES_EMAIL, "hola@domuscol.me"),
+  salesEmail: env(process.env.NEXT_PUBLIC_SALES_EMAIL, "ventas@domuscol.me"),
   supportHours: "Lunes a sábado, 7:00 a. m. a 7:00 p. m.",
 } as const;
 
