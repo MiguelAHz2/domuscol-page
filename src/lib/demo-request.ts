@@ -85,3 +85,6 @@ export function normalizeDemoRequest(v: DemoRequestInput): DemoRequest {
 
 /** Name of the hidden anti-spam field. People never see it; bots fill it. */
 export const HONEYPOT_FIELD = "sitio_web";
+
+/** Body key for the Cloudflare Turnstile token, when the check is enabled. */
+export const TURNSTILE_FIELD = "turnstile";

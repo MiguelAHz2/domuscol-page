@@ -57,7 +57,7 @@ export function PhoneMock({
             </span>
           </div>
           <div className="mt-5 flex items-center gap-2">
-            <Isotipo className="h-6 w-6" />
+            <Isotipo className="h-6 w-6 text-white" />
             <span className="text-[11px] text-white/70">Altos del Bosque</span>
           </div>
           <p className="mt-2 text-lg font-bold leading-tight">Hola, {residentName}</p>

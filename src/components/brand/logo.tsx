@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 
 // Isotipo: two towers drawn only by their windows, one of them lit in
 // emerald — the same "unidad al día" signal used across the product.
+// It inherits the text colour, so it works on light and navy surfaces.
 const windows: Array<[number, number]> = [
   [7, 6], [11.5, 6],
   [7, 10.5],
@@ -12,24 +13,25 @@ const windows: Array<[number, number]> = [
 export function Isotipo({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 32 32" aria-hidden className={cn("h-8 w-8", className)}>
-      <rect width="32" height="32" rx="8" className="fill-white/[0.08]" />
-      <rect x=".5" y=".5" width="31" height="31" rx="7.5" fill="none" className="stroke-white/15" />
-      <g className="fill-white">
+      <rect width="32" height="32" rx="8" fill="currentColor" fillOpacity="0.08" />
+      <rect x=".5" y=".5" width="31" height="31" rx="7.5" fill="none" stroke="currentColor" strokeOpacity="0.15" />
+      <g fill="currentColor">
         {windows.map(([x, y]) => (
           <rect key={`${x}-${y}`} x={x} y={y} width="3.5" height="3.5" rx=".8" />
         ))}
       </g>
       <rect x="11.5" y="10.5" width="3.5" height="3.5" rx=".8" className="fill-emerald" />
-      <rect x="6" y="24.5" width="20" height="1.5" rx=".75" className="fill-white/50" />
+      <rect x="6" y="24.5" width="20" height="1.5" rx=".75" fill="currentColor" fillOpacity="0.5" />
     </svg>
   );
 }
 
+/** Navy on light surfaces, white in dark mode. Pass a text colour to force one. */
 export function Logo({ className }: { className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
+    <span className={cn("inline-flex items-center gap-2.5 text-navy dark:text-white", className)}>
       <Isotipo />
-      <span className="text-[1.1875rem] font-extrabold tracking-[-0.02em] text-white">DomusCol</span>
+      <span className="text-[1.1875rem] font-extrabold tracking-[-0.02em]">DomusCol</span>
     </span>
   );
 }

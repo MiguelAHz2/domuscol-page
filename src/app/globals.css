@@ -23,6 +23,7 @@
   --c-navy-deep: 7 21 39;
   --c-navy-raised: 22 48 86;
   --c-window: 30 58 95;         /* ventana apagada */
+  --c-band: 227 236 248;        /* #E3ECF8, franjas de marca en modo claro */
   color-scheme: light;
 }
 
@@ -43,6 +44,7 @@
   --c-navy-deep: 5 15 29;
   --c-navy-raised: 20 42 76;
   --c-window: 28 52 86;
+  --c-band: 10 28 52;
   color-scheme: dark;
 }
 
@@ -76,6 +78,7 @@
     border-radius: 6px;
   }
 
+  .dark :focus-visible,
   .on-navy :focus-visible {
     outline-color: rgb(var(--c-emerald));
   }
@@ -98,15 +101,44 @@
     --glass-b: rgb(255 255 255 / 0.4);
     --glass-rim: rgb(255 255 255 / 0.9);
     --glass-rim-2: rgb(255 255 255 / 0.3);
-    --glass-blur: 22px;
+    /* Blur cost grows with the radius; 16px keeps the frosted look */
+    --glass-blur: 16px;
     --glass-shadow: 0 12px 36px -16px rgb(13 34 63 / 0.3), 0 2px 6px -2px rgb(13 34 63 / 0.06);
     --glass-inset: inset 0 1px 0 rgb(255 255 255 / 0.9), inset 0 -1px 0 rgb(255 255 255 / 0.3);
     position: relative;
     isolation: isolate;
     background: linear-gradient(165deg, var(--glass-a), var(--glass-b));
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(175%);
-    backdrop-filter: blur(var(--glass-blur)) saturate(175%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(150%);
     box-shadow: var(--glass-shadow), var(--glass-inset);
+  }
+
+  /* Modest devices (html.lite, set in the layout) and people who ask for
+     less transparency get the same surfaces without the live blur. */
+  .lite .glass {
+    --glass-a: rgb(255 255 255 / 0.95);
+    --glass-b: rgb(255 255 255 / 0.9);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .lite.dark .glass {
+    --glass-a: rgb(22 44 78 / 0.97);
+    --glass-b: rgb(14 32 58 / 0.95);
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .glass {
+      --glass-a: rgb(255 255 255 / 0.95);
+      --glass-b: rgb(255 255 255 / 0.9);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+
+    .dark .glass {
+      --glass-a: rgb(22 44 78 / 0.97);
+      --glass-b: rgb(14 32 58 / 0.95);
+    }
   }
 
   /* Specular rim: brighter on the lit corner, fading across the edge */
@@ -146,13 +178,20 @@
     --glass-a: rgb(22 44 78 / 0.82);
     --glass-b: rgb(14 32 58 / 0.76);
   }
+}
 
-  /* Chromium only (class set by <GlassEffects/>): lens refraction at the
-     edges through the SVG filter #lg-refract. Other browsers keep blur. */
-  .lg-refract .glass-refract {
-    -webkit-backdrop-filter: url(#lg-refract) blur(var(--glass-blur)) saturate(175%);
-    backdrop-filter: url(#lg-refract) blur(var(--glass-blur)) saturate(175%);
-  }
+/* ------------------------------------------------------------------
+   Theme switch: the new theme grows as a circle from the toggle (see
+   ThemeToggle). The default cross-fade is replaced by that clip-path.
+------------------------------------------------------------------- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
 }
 
 @layer utilities {
@@ -318,6 +357,67 @@
 
 .range:active::-webkit-slider-thumb {
   transform: scale(1.12);
+}
+
+/* Conjunto model: callout chips are centred on the end of their leader
+   line. On a narrow stage they shrink to icons; the story text beside the
+   model carries the details. */
+.scene {
+  container-type: inline-size;
+}
+
+.callout {
+  transform: translate(-50%, -50%);
+}
+
+@container (max-width: 560px) {
+  .callout .callout-text {
+    display: none;
+  }
+
+  .callout {
+    padding: 3px;
+  }
+}
+
+@keyframes marker-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+.marker-pulse {
+  animation: marker-pulse 1.8s ease-out infinite;
+}
+
+/* Day player: the ring fills up until the next hour */
+@keyframes play-ring {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.play-ring {
+  animation: play-ring var(--play-ms, 4s) linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marker-pulse {
+    display: none;
+  }
+
+  /* A progress bar isn't decorative motion: keep its real duration. */
+  .play-ring {
+    animation-duration: var(--play-ms, 4s) !important;
+  }
 }
 
 dialog::backdrop {

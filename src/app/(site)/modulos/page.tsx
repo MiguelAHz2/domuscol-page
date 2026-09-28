@@ -25,11 +25,11 @@ export default function ModulosPage() {
         image={{ src: brickTower, alt: "Torre residencial de ladrillo en Bogotá", position: "70% 45%", credit: "Victor Rosario" }}
       >
         <ul className="flex flex-wrap gap-2">
-          <li className="rounded-full border border-white/20 px-3.5 py-1.5 text-sm font-medium text-white">
+          <li className="rounded-full border border-[rgb(var(--c-ink)/0.15)] bg-surface/60 px-3.5 py-1.5 text-sm font-medium text-ink dark:border-white/20 dark:bg-transparent dark:text-white">
             <span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-emerald" aria-hidden />
             {featureCount("fase-1")} funciones en Fase 1
           </li>
-          <li className="rounded-full border border-white/20 px-3.5 py-1.5 text-sm font-medium text-white/80">
+          <li className="rounded-full border border-[rgb(var(--c-ink)/0.15)] bg-surface/60 px-3.5 py-1.5 text-sm font-medium text-body dark:border-white/20 dark:bg-transparent dark:text-white/80">
             {featureCount("proximamente")} en las fases siguientes
           </li>
         </ul>

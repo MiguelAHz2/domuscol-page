@@ -32,7 +32,7 @@ export function AdminPanel({ units, residentUnitId, justPaidId, activity }: Admi
   const animatedCollected = useAnimatedNumber(collected, { duration: 700 });
 
   return (
-    <div className="glass glass-strong overflow-hidden rounded-[20px] shadow-float">
+    <div className="overflow-hidden rounded-[20px] border border-white/70 bg-surface shadow-float dark:border-white/10">
       {/* Browser chrome */}
       <div className="flex h-10 items-center gap-3 border-b border-line bg-surface-2 px-4">
         <div aria-hidden className="flex gap-1.5">

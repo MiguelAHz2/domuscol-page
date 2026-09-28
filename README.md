@@ -30,12 +30,12 @@
 ## ✨ Qué hay adentro
 
 - **Una demo que se toca en el hero.** La fachada del conjunto es la cartera: cada ventana es una unidad. El visitante paga la cuota desde el celular de ejemplo y ve encenderse su ventana en el panel del administrador.
-- **Bogotá de noche, generada en código.** Los cerros orientales, la luz de Monserrate y torres cuyas ventanas se encienden en esmeralda al pasar el cursor.
-- **Un día en el conjunto.** Una escena isométrica que va de las 6 a. m. a las 10 p. m. con una línea de tiempo; cada hora muestra un módulo trabajando donde ocurre.
+- **Bogotá de noche, generada en código.** Los cerros orientales, la luz de Monserrate y torres cuyas ventanas se encienden en esmeralda al pasar el cursor. Cada capa se pinta una vez y el paralaje lo mueve la GPU.
+- **Un día en el conjunto.** Una maqueta isométrica de Altos del Bosque (torres de ladrillo con balcones, piscina, BBQ, parqueadero y portería) que va de las 6 a. m. a las 10 p. m.; etiquetas flotantes muestran el recaudo, las PQR, las reservas y los visitantes de cada hora.
 - **Lugares reales, pantallas reales.** Fotos de la vida en conjunto con la pantalla de DomusCol encima en *liquid glass*: paz y salvo, pase QR, reservas, votaciones y mantenimientos.
 - **Precios y ahorro.** Simulador por número de unidades y calculadora de horas ahorradas, con los supuestos a la vista.
-- **Formulario que sí llega.** Validación en navegador y servidor, protección anti-spam y entrega por correo (Resend) y/o webhook.
-- **Listo para producción.** Modo claro y oscuro, accesible con teclado, respeta la preferencia de movimiento reducido, SEO por página, imagen para compartir, sitemap, datos estructurados y cabeceras de seguridad.
+- **Formulario que sí llega.** Validación en navegador y servidor, anti-bots (honeypot, límite por IP y Cloudflare Turnstile), entrega por correo, webhook y aviso a tu WhatsApp, correo de confirmación al interesado y opción de seguir la conversación por WhatsApp.
+- **Listo para producción.** Modo claro y oscuro con transición circular, accesible con teclado, respeta la preferencia de movimiento reducido, SEO por página, textos legales (Ley 1581), analítica sin cookies, monitoreo de errores, sitemap, datos estructurados y cabeceras de seguridad.
 
 ## 📸 Vista previa
 
@@ -68,7 +68,10 @@
 | UI | React 18, TypeScript 5, Tailwind CSS 3.4 con tokens en variables CSS |
 | Íconos y tipografía | [lucide-react](https://lucide.dev), Plus Jakarta Sans (la misma del panel `web-admin`) |
 | Imágenes | `next/image` (AVIF y WebP) e imágenes generadas con `next/og` |
-| Formulario | Route handler propio, [Resend](https://resend.com) y/o webhook |
+| Formulario | Route handler propio, [Resend](https://resend.com), webhook y [CallMeBot](https://www.callmebot.com) |
+| Anti-bots | Honeypot, límite por IP y [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/) |
+| Analítica | [Vercel Web Analytics y Speed Insights](https://vercel.com/docs/analytics), sin cookies |
+| Errores | [Sentry](https://sentry.io), cargado solo si hay DSN |
 | Hosting | [Vercel](https://vercel.com) |
 
 El producto (API NestJS y panel `web-admin`) vive en el repositorio `domuscol-app`; esta landing comparte su marca: Azul Domus `#0D223F`, esmeralda `#10B981` y Plus Jakarta Sans.
@@ -94,6 +97,7 @@ Abre [http://localhost:3100](http://localhost:3100). En desarrollo, si no config
 | `pnpm lint` | ESLint con las reglas de Next |
 | `pnpm typecheck` | Verificación de tipos de TypeScript |
 | `pnpm check` | Tipos, lint y build de una vez: úsalo antes de subir cambios |
+| `pnpm probar:formulario` | Prueba el formulario de punta a punta con testmail.app ([ver abajo](#probar-formulario)) |
 
 ## 🔐 Variables de entorno
 
@@ -102,30 +106,43 @@ Todas están documentadas en [`.env.example`](.env.example). Las que empiezan po
 | Variable | Para qué sirve | Ejemplo |
 | --- | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | URL canónica: sitemap, SEO e imagen para compartir | `https://domuscol.me` |
-| `NEXT_PUBLIC_RESIDENTS_URL` | Botón "Acceso residentes" | `https://app.domuscol.me/login` |
+| `NEXT_PUBLIC_RESIDENTS_URL` | Botón "Acceso residentes". Vacía, el botón explica que el portal llega con la Fase 1 | `https://app.domuscol.me/login` |
+| `NEXT_PUBLIC_DEMO_VIDEO_URL` | Video del botón del inicio (YouTube, Vimeo o `.mp4`). Vacía, el botón reproduce el recorrido de un día | `https://youtu.be/...` |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | Número de WhatsApp, solo dígitos con el 57 | `573239377429` |
 | `NEXT_PUBLIC_WHATSAPP_LABEL` | Cómo se muestra el número | `+57 323 937 7429` |
 | `NEXT_PUBLIC_SUPPORT_EMAIL` | Correo de soporte técnico | `soporte@domuscol.me` |
 | `NEXT_PUBLIC_SALES_EMAIL` | Correo comercial | `ventas@domuscol.me` |
-| `RESEND_API_KEY` | Activa el envío de solicitudes por correo | `re_...` |
+| `NEXT_PUBLIC_INSTAGRAM_URL` y demás redes | Perfil de cada red; vacía, el ícono no aparece | `https://instagram.com/domuscol` |
+| `NEXT_PUBLIC_COMPANY_*` | Razón social, NIT, dirección y ciudad del responsable de los datos | `DomusCol S.A.S.` |
+| `NEXT_PUBLIC_PRIVACY_EMAIL` | Correo para ejercer derechos sobre datos personales | `datos@domuscol.me` |
+| `RESEND_API_KEY` | Activa el correo al equipo y la confirmación al interesado | `re_...` |
 | `LEADS_EMAIL_TO` | Destinatarios, separados por coma | `ventas@domuscol.me` |
 | `LEADS_EMAIL_FROM` | Remitente (dominio verificado en Resend) | `DomusCol <solicitudes@domuscol.me>` |
+| `LEADS_CONFIRMATION_EMAIL` | `false` desactiva el correo de confirmación | `true` |
 | `LEADS_WEBHOOK_URL` | Activa el envío a un webhook | `https://hook.make.com/...` |
 | `LEADS_WEBHOOK_SECRET` | Opcional, llega como `Authorization: Bearer` | `una-clave-larga` |
+| `CALLMEBOT_PHONE` y `CALLMEBOT_APIKEY` | Aviso de cada solicitud a tu WhatsApp | `+573239377429` |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` y `TURNSTILE_SECRET_KEY` | Activan la verificación anti-bots | `0x4AAAA...` |
+| `SENTRY_DSN` y `NEXT_PUBLIC_SENTRY_DSN` | Activan el monitoreo de errores (mismo valor) | `https://...ingest.sentry.io/...` |
+| `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` | Opcional: suben los source maps en el build | `sntrys_...` |
 
 ## 📬 Formulario de demo
 
 ```mermaid
 flowchart LR
   A["Formulario en /contacto"] -->|POST JSON| B["/api/solicitud-demo"]
-  B --> C{"Validación, anti-spam y límite por IP"}
-  C -->|RESEND_API_KEY| D["Correo con Resend"]
+  B --> C{"Validación, honeypot, límite por IP y Turnstile"}
+  C -->|RESEND_API_KEY| D["Correo al equipo"]
   C -->|LEADS_WEBHOOK_URL| E["Webhook: Google Sheets, Make, Zapier o CRM"]
+  C -->|CALLMEBOT_*| F["Aviso a tu WhatsApp"]
+  D & E & F --> G["Correo de confirmación al interesado"]
+  G --> H["Pantalla de éxito con Continuar por WhatsApp"]
 ```
 
 - **Validación compartida.** Las mismas reglas corren en el navegador (respuesta inmediata) y en el servidor ([`src/lib/demo-request.ts`](src/lib/demo-request.ts)).
-- **Anti-spam.** Un campo oculto que solo llenan los bots y un límite de 5 solicitudes por IP cada 10 minutos.
-- **Varios canales.** Si configuras correo y webhook, se usan los dos; basta con que uno funcione para confirmar al visitante.
+- **Anti-spam.** Un campo oculto que solo llenan los bots, un límite de 5 solicitudes por IP cada 10 minutos y, si lo activas, Cloudflare Turnstile: invisible para casi todos y cargado solo cuando la persona empieza a llenar el formulario.
+- **Varios canales.** Correo, webhook y WhatsApp se usan a la vez; basta con que uno funcione para confirmar al visitante. Los fallos se registran y, con Sentry activo, te llegan como alerta.
+- **Confirmación y WhatsApp.** El interesado recibe un correo de confirmación (si falla, no bloquea nada) y la pantalla de éxito le ofrece seguir por WhatsApp con un mensaje ya escrito con sus datos.
 - **Nunca se pierde en silencio.** Sin canales configurados, producción responde con error y el formulario ofrece WhatsApp con un mensaje ya escrito.
 - **Respuestas con el mismo formato de la API del producto:** `{ success, data?, error? }`.
 
@@ -137,7 +154,42 @@ flowchart LR
 3. Define `RESEND_API_KEY`, `LEADS_EMAIL_TO` y `LEADS_EMAIL_FROM`.
 4. Para probar antes de verificar el dominio, usa `LEADS_EMAIL_FROM="DomusCol <onboarding@resend.dev>"` (solo envía a tu propio correo de Resend).
 
-Cada solicitud llega con asunto *"Solicitud de demo: {conjunto} ({unidades} unidades, {ciudad})"*, y al responder el correo le escribes directamente a quien la envió.
+Cada solicitud llega con asunto *"Solicitud de demo: {conjunto} ({unidades} unidades, {ciudad})"*, y al responder el correo le escribes directamente a quien la envió. El interesado recibe *"Recibimos tu solicitud de demo de DomusCol"*, con respuesta dirigida a `NEXT_PUBLIC_SALES_EMAIL`. La confirmación solo funciona con el dominio verificado: con `onboarding@resend.dev`, Resend no deja escribir a terceros.
+
+</details>
+
+<details>
+<summary><strong>Recibir cada solicitud en tu WhatsApp (CallMeBot)</strong></summary>
+
+1. Activa tu API key siguiendo [las instrucciones de CallMeBot](https://www.callmebot.com/blog/free-api-whatsapp-messages/): agregas el número del bot y le envías el mensaje de activación desde tu WhatsApp.
+2. Define `CALLMEBOT_PHONE` (con `+57`) y `CALLMEBOT_APIKEY`.
+
+Es gratis y solo escribe a tu propio número, ideal para enterarte al instante. Para escribirle automáticamente a los clientes se necesita la API oficial de WhatsApp Business (Meta), con plantillas aprobadas.
+
+</details>
+
+<details>
+<summary><strong>Activar Cloudflare Turnstile</strong></summary>
+
+1. En [dash.cloudflare.com](https://dash.cloudflare.com), **Turnstile > Add widget**, con el dominio `domuscol.me` (y el de vista previa de Vercel si quieres probar ahí) en modo *Managed*.
+2. Copia la clave del sitio en `NEXT_PUBLIC_TURNSTILE_SITE_KEY` y la secreta en `TURNSTILE_SECRET_KEY`, y vuelve a desplegar (la clave del sitio se incluye en el build).
+
+Para desarrollo, Cloudflare publica claves que siempre aprueban: sitio `1x00000000000000000000AA` y secreto `1x0000000000000000000000000000000AA`.
+
+</details>
+
+<a id="probar-formulario"></a>
+
+<details>
+<summary><strong>Probar el formulario con testmail.app</strong></summary>
+
+El script envía una solicitud con un correo de [testmail.app](https://testmail.app) y espera la confirmación:
+
+```bash
+TESTMAIL_APIKEY=... TESTMAIL_NAMESPACE=... pnpm probar:formulario http://localhost:3100
+```
+
+En PowerShell define antes `$env:TESTMAIL_APIKEY` y `$env:TESTMAIL_NAMESPACE`. Si pones `LEADS_EMAIL_TO=<namespace>.equipo@inbox.testmail.app` y agregas `--equipo`, también comprueba el correo que le llega al equipo. Con Turnstile activo, pruébalo en local o en un preview con las claves de prueba de Cloudflare: en producción el token de prueba se rechaza, como debe ser.
 
 </details>
 
@@ -204,18 +256,25 @@ function doPost(e) {
 
    El certificado HTTPS se emite solo cuando el DNS propaga.
 
+## 📈 Analítica y errores
+
+- **Vercel Web Analytics y Speed Insights** ya están en el layout. Actívalos en el proyecto de Vercel (pestañas *Analytics* y *Speed Insights*); no usan cookies, así que no hace falta banner de consentimiento.
+- **Sentry** se descarga solo si defines `NEXT_PUBLIC_SENTRY_DSN`, y cuando la página ya está quieta, así que no afecta la carga. En el servidor se activa con `SENTRY_DSN`. No envía datos del formulario ni de la persona. Con `SENTRY_AUTH_TOKEN` el build sube los source maps y los errores se leen con el código original.
+
 ## ✅ Antes de lanzar
 
-- [ ] Variables de producción cargadas en Vercel (contacto, Resend y/o webhook)
-- [ ] Dominio verificado en Resend y una solicitud de prueba recibida
-- [ ] Textos legales reales en `/legal/*` (hoy son un aviso de "documento en preparación")
-- [ ] Redes sociales reales en [`src/components/layout/footer.tsx`](src/components/layout/footer.tsx)
+- [ ] Variables de producción cargadas en Vercel (contacto, Resend, webhook o CallMeBot, Turnstile, Sentry)
+- [ ] Dominio verificado en Resend (SPF, DKIM y un registro DMARC) y `pnpm probar:formulario` en verde
+- [ ] Datos del responsable (`NEXT_PUBLIC_COMPANY_*`) completos y textos de `/legal/*` revisados por un abogado ([`src/lib/data/legal.ts`](src/lib/data/legal.ts))
+- [ ] Consultar con el abogado si la base de datos de prospectos debe inscribirse en el RNBD de la SIC
+- [ ] Redes sociales en las variables `NEXT_PUBLIC_*_URL`
 - [ ] Precios confirmados en [`src/lib/data/pricing.ts`](src/lib/data/pricing.ts)
 - [ ] Fases y tiempos de la hoja de ruta en [`src/lib/data/roadmap.ts`](src/lib/data/roadmap.ts)
 - [ ] Supuestos de la calculadora de ahorro en [`src/components/sections/savings-calculator.tsx`](src/components/sections/savings-calculator.tsx)
-- [ ] Sitio y `sitemap.xml` registrados en Google Search Console
+- [ ] Analytics y Speed Insights activados en Vercel
+- [ ] Sitio y `sitemap.xml` registrados en Google Search Console y perfil de Google Business
+- [ ] Monitor de disponibilidad (por ejemplo UptimeRobot o Better Stack) apuntando a `https://domuscol.me`
 - [ ] Vista previa del enlace revisada al compartirlo por WhatsApp
-- [ ] (Opcional) Analítica con banner de consentimiento, por la Ley 1581
 
 ## 🗂️ Estructura
 
@@ -232,8 +291,10 @@ src/
 │  │  ├─ precios/             Simulador, planes y calculadora de ahorro
 │  │  ├─ preguntas-frecuentes/
 │  │  ├─ contacto/            Formulario de demo
-│  │  └─ legal/[slug]/        Textos legales (por completar)
-│  ├─ api/solicitud-demo/     Recibe y entrega las solicitudes
+│  │  ├─ legal/[slug]/        Textos legales (Ley 1581)
+│  │  └─ error.tsx            Página de error dentro del sitio
+│  ├─ api/solicitud-demo/     Recibe, verifica y entrega las solicitudes
+│  ├─ global-error.tsx        Último recurso si falla el layout
 │  ├─ opengraph-image.tsx     Imagen para compartir en redes
 │  ├─ apple-icon.tsx          Ícono para la pantalla de inicio del celular
 │  ├─ manifest.ts, robots.ts, sitemap.ts
@@ -241,14 +302,20 @@ src/
 ├─ assets/images/             Fotografías (ver créditos)
 ├─ components/
 │  ├─ hero/                   Fachada, panel, celular y skyline
-│  ├─ day/                    Escena isométrica del conjunto
+│  ├─ day/                    Maqueta isométrica del conjunto
+│  ├─ monitoring/             Analítica de Vercel y carga diferida de Sentry
 │  ├─ sections/               Secciones de cada página
 │  ├─ layout/                 Navbar, footer, encabezados y cierre
-│  └─ ui/                     Botones, insignias, efectos de vidrio
-└─ lib/
-   ├─ data/                   Contenido: módulos, precios, FAQ, perfiles, día
-   ├─ demo-request.ts         Reglas del formulario (cliente y servidor)
-   └─ site.ts                 Datos del sitio y enlaces de contacto
+│  └─ ui/                     Botones, insignias, Turnstile
+├─ lib/
+│  ├─ data/                   Contenido: módulos, precios, FAQ, perfiles, día, legal
+│  ├─ server/leads.ts         Canales: Resend, webhook, CallMeBot, Turnstile
+│  ├─ demo-request.ts         Reglas del formulario (cliente y servidor)
+│  ├─ monitoring.ts           Sentry en el navegador
+│  └─ site.ts                 Datos del sitio, redes y responsable de los datos
+└─ instrumentation.ts         Sentry en el servidor
+scripts/
+└─ probar-formulario.mjs      Prueba de punta a punta con testmail.app
 ```
 
 </details>

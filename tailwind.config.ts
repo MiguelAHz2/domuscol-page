@@ -43,6 +43,7 @@ const config: Config = {
           raised: token("navy-raised"),
         },
         window: token("window"),
+        band: token("band"),
       },
       maxWidth: {
         page: "75rem",

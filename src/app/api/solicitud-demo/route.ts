@@ -1,16 +1,25 @@
 import { NextResponse } from "next/server";
 import {
   HONEYPOT_FIELD,
+  TURNSTILE_FIELD,
   normalizeDemoRequest,
   validateDemoRequest,
-  type DemoRequest,
   type DemoRequestInput,
 } from "@/lib/demo-request";
-import { site } from "@/lib/site";
+import {
+  captureServerError,
+  channels,
+  sendConfirmation,
+  sendLeadEmail,
+  sendLeadWebhook,
+  sendLeadWhatsapp,
+  verifyTurnstile,
+} from "@/lib/server/leads";
 
-// Receives demo requests from /contacto and delivers them by email (Resend)
-// and/or webhook, whichever is configured. Responses follow the team's API
-// convention: { success, data?, error? }.
+// Receives demo requests from /contacto and delivers them to the team by
+// email (Resend), webhook and/or WhatsApp (CallMeBot), whichever are
+// configured, then confirms to the prospect by email. Responses follow the
+// team's API convention: { success, data?, error? }.
 
 type ApiResponse = { success: boolean; data?: unknown; error?: string };
 
@@ -27,84 +36,6 @@ function rateLimited(ip: string) {
   recent.push(now);
   hits.set(ip, recent);
   return recent.length > MAX_PER_WINDOW;
-}
-
-const escapeHtml = (value: string | number) =>
-  String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
-
-function emailContent(r: DemoRequest, receivedAt: string) {
-  const rows: Array<[string, string | number]> = [
-    ["Nombre", r.nombre],
-    ["Correo", r.correo],
-    ["Ciudad", r.ciudad],
-    ["Conjunto", r.conjunto],
-    ["Unidades", r.unidades],
-    ["Autorización de datos (Ley 1581)", "Sí"],
-    ["Recibida", receivedAt],
-  ];
-  const text = rows.map(([k, v]) => `${k}: ${v}`).join("\n");
-  const html = `
-    <div style="font-family:Arial,Helvetica,sans-serif;color:#0D223F;max-width:560px">
-      <h2 style="margin:0 0 4px">Nueva solicitud de demo</h2>
-      <p style="margin:0 0 16px;color:#5E708A">Llegó desde ${escapeHtml(site.url)}/contacto</p>
-      <table style="border-collapse:collapse;width:100%">
-        ${rows
-          .map(
-            ([k, v]) =>
-              `<tr><td style="padding:8px 12px 8px 0;border-bottom:1px solid #DCE3EE;color:#5E708A;white-space:nowrap">${escapeHtml(k)}</td><td style="padding:8px 0;border-bottom:1px solid #DCE3EE;font-weight:600">${escapeHtml(v)}</td></tr>`,
-          )
-          .join("")}
-      </table>
-      <p style="margin:16px 0 0;color:#5E708A">Responde a este correo para escribirle directamente a ${escapeHtml(r.nombre)}.</p>
-    </div>`;
-  return { text, html };
-}
-
-async function sendEmail(r: DemoRequest, receivedAt: string) {
-  const to = (process.env.LEADS_EMAIL_TO ?? "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
-  if (to.length === 0) throw new Error("LEADS_EMAIL_TO is empty");
-  const { text, html } = emailContent(r, receivedAt);
-
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      from: process.env.LEADS_EMAIL_FROM || "DomusCol <onboarding@resend.dev>",
-      to,
-      reply_to: r.correo,
-      subject: `Solicitud de demo: ${r.conjunto} (${r.unidades} unidades, ${r.ciudad})`,
-      text,
-      html,
-    }),
-    signal: AbortSignal.timeout(8000),
-  });
-  if (!res.ok) throw new Error(`Resend responded ${res.status}: ${await res.text()}`);
-}
-
-async function sendWebhook(r: DemoRequest, receivedAt: string) {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (process.env.LEADS_WEBHOOK_SECRET) headers.Authorization = `Bearer ${process.env.LEADS_WEBHOOK_SECRET}`;
-
-  const res = await fetch(process.env.LEADS_WEBHOOK_URL!, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({
-      evento: "solicitud_demo",
-      recibida: receivedAt,
-      origen: `${site.url}/contacto`,
-      nombre: r.nombre,
-      correo: r.correo,
-      ciudad: r.ciudad,
-      conjunto: r.conjunto,
-      unidades: r.unidades,
-      autorizacion_datos: r.autorizacion,
-    }),
-    signal: AbortSignal.timeout(8000),
-  });
-  if (!res.ok) throw new Error(`Webhook responded ${res.status}`);
 }
 
 export async function POST(request: Request) {
@@ -131,42 +62,69 @@ export async function POST(request: Request) {
     return reply(422, { success: false, error: "Revisa los campos marcados.", data: { fields: errors } });
   }
 
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
-  if (rateLimited(ip)) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
+  if (rateLimited(ip ?? "local")) {
     return reply(429, {
       success: false,
       error: "Recibimos varias solicitudes seguidas desde tu conexión. Espera unos minutos o escríbenos por WhatsApp.",
     });
   }
 
+  if (!(await verifyTurnstile(String(body[TURNSTILE_FIELD] ?? ""), ip))) {
+    return reply(403, {
+      success: false,
+      error: "No pudimos confirmar que la solicitud la envía una persona. Recarga la página e inténtalo de nuevo.",
+      data: { turnstile: true },
+    });
+  }
+
   const demo = normalizeDemoRequest(input);
   const receivedAt = new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" });
 
-  const channels: Array<Promise<void>> = [];
-  if (process.env.RESEND_API_KEY) channels.push(sendEmail(demo, receivedAt));
-  if (process.env.LEADS_WEBHOOK_URL) channels.push(sendWebhook(demo, receivedAt));
+  const deliveries: Array<Promise<void>> = [];
+  if (channels.email()) deliveries.push(sendLeadEmail(demo, receivedAt));
+  if (channels.webhook()) deliveries.push(sendLeadWebhook(demo, receivedAt));
+  if (channels.whatsapp()) deliveries.push(sendLeadWhatsapp(demo));
 
-  if (channels.length === 0) {
+  if (deliveries.length === 0) {
     if (process.env.NODE_ENV !== "production") {
       console.info("[solicitud-demo] No delivery channel configured; request logged only:", demo);
       return reply(200, { success: true, data: { delivered: false } });
     }
-    console.error("[solicitud-demo] No delivery channel configured (RESEND_API_KEY or LEADS_WEBHOOK_URL).");
+    const error = new Error("No delivery channel configured (RESEND_API_KEY, LEADS_WEBHOOK_URL or CALLMEBOT_*)");
+    console.error("[solicitud-demo]", error.message);
+    await captureServerError(error);
     return reply(503, {
       success: false,
       error: "No pudimos recibir tu solicitud en este momento. Escríbenos por WhatsApp y te atendemos de inmediato.",
     });
   }
 
-  const results = await Promise.allSettled(channels);
-  results
-    .filter((r): r is PromiseRejectedResult => r.status === "rejected")
-    .forEach((r) => console.error("[solicitud-demo] Delivery failed:", r.reason));
+  const results = await Promise.allSettled(deliveries);
+  const failures = results.filter((r): r is PromiseRejectedResult => r.status === "rejected").map((r) => r.reason);
+  failures.forEach((reason) => console.error("[solicitud-demo] Delivery failed:", reason));
 
-  if (results.some((r) => r.status === "fulfilled")) return reply(200, { success: true });
+  if (failures.length === results.length) {
+    await captureServerError(new AggregateError(failures, "Every delivery channel failed"));
+    return reply(502, {
+      success: false,
+      error: "No pudimos enviar tu solicitud. Inténtalo de nuevo en un momento o escríbenos por WhatsApp.",
+    });
+  }
 
-  return reply(502, {
-    success: false,
-    error: "No pudimos enviar tu solicitud. Inténtalo de nuevo en un momento o escríbenos por WhatsApp.",
-  });
+  // The team has it. The confirmation is a courtesy: if it fails we log
+  // it, and the person still sees the success screen.
+  let confirmed = false;
+  if (channels.confirmation()) {
+    try {
+      await sendConfirmation(demo);
+      confirmed = true;
+    } catch (error) {
+      console.error("[solicitud-demo] Confirmation email failed:", error);
+      failures.push(error);
+    }
+  }
+  if (failures.length > 0) await captureServerError(new AggregateError(failures, "Some delivery channels failed"));
+
+  return reply(200, { success: true, data: { confirmation: confirmed } });
 }

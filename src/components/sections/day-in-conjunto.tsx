@@ -1,61 +1,46 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Moon, Pause, Play, Sun, Sunrise, Sunset } from "lucide-react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { Pause, Play, RotateCcw } from "lucide-react";
 import { ConjuntoScene } from "@/components/day/conjunto-scene";
 import {
   DAY_STEPS,
-  FACE_LEFT,
-  FACE_RIGHT,
-  FACE_TOP,
-  GLASS,
-  GROUND,
-  MOON_OPACITY,
-  PAVING,
-  SKY_BOTTOM,
-  SKY_TOP,
-  SUN_OPACITY,
-  SUN_X,
-  SUN_Y,
-  TREE,
-  WATER,
+  DAY_TOUR_EVENT,
+  SCENE_NUMBERS,
+  SCENE_PALETTE,
+  SCENE_UNITS,
+  STAGE,
+  SUN_PALETTE,
   ZONES,
   type ZoneId,
 } from "@/lib/data/day";
 import { sampleColor, sampleNumber } from "@/lib/iso";
 import { cn } from "@/lib/utils";
 
-const DOOR = ["#51627E", "#5E708A", "#5E708A", "#5E708A", "#34455F", "#0A1B33"] as const;
-const TRUNK = ["#7A6A58", "#8A7560", "#8A7560", "#8A7560", "#4F463D", "#1C2A2A"] as const;
-const LABEL_ALPHA = [0.5, 0.45, 0.45, 0.45, 0.6, 0.7] as const;
-const SHADE = [0.9, 1, 1, 1, 0.72, 0.42] as const;
 const SHORT_TIME = ["6 a. m.", "9 a. m.", "11 a. m.", "2 p. m.", "6 p. m.", "10 p. m."];
-const CLOCK_ICON = [Sunrise, Sun, Sun, Sun, Sunset, Moon];
 const N = DAY_STEPS.length;
-const AUTOPLAY_MS = 4200;
+const AUTOPLAY_MS = 4000;
 
-/** Writes the time-of-day palette for position t (0 = 6 a. m., 1 = 10 p. m.). */
+/** Scene variables for position t (0 = 6 a. m., 1 = 10 p. m.) and a theme. */
+function sceneVars(t: number, dark: boolean): Record<string, string> {
+  const vars: Record<string, string> = {};
+  const colors = { ...SCENE_PALETTE, ...SUN_PALETTE, ...(dark ? STAGE.dark : STAGE.light) };
+  for (const [name, keys] of Object.entries(colors)) vars[name] = sampleColor(keys, t);
+  for (const [name, keys] of Object.entries(SCENE_NUMBERS)) {
+    const v = Math.round(sampleNumber(keys, t) * 1000) / 1000;
+    vars[name] = `${v}${SCENE_UNITS[name] ?? ""}`;
+  }
+  return vars;
+}
+
+// Rendered on the server so the model has its dawn colours before
+// hydration; the first paint on the client picks the right theme.
+const INITIAL_VARS = sceneVars(0, false) as CSSProperties;
+
+/** Writes the palette for t, with the stage following the site theme. */
 function paint(el: HTMLElement, t: number) {
-  const set = (name: string, value: string) => el.style.setProperty(name, value);
-  set("--sky-top", sampleColor(SKY_TOP, t));
-  set("--sky-bottom", sampleColor(SKY_BOTTOM, t));
-  set("--face-top", sampleColor(FACE_TOP, t));
-  set("--face-left", sampleColor(FACE_LEFT, t));
-  set("--face-right", sampleColor(FACE_RIGHT, t));
-  set("--ground", sampleColor(GROUND, t));
-  set("--paving", sampleColor(PAVING, t));
-  set("--water", sampleColor(WATER, t));
-  set("--glass", sampleColor(GLASS, t));
-  set("--tree", sampleColor(TREE, t));
-  set("--door", sampleColor(DOOR, t));
-  set("--trunk", sampleColor(TRUNK, t));
-  const alpha = sampleNumber(LABEL_ALPHA, t);
-  set("--label", t > 0.7 ? `rgb(255 255 255 / ${alpha})` : `rgb(13 34 63 / ${alpha})`);
-  set("--sun-x", `${sampleNumber(SUN_X, t)}%`);
-  set("--sun-y", `${sampleNumber(SUN_Y, t)}%`);
-  set("--sun-o", String(sampleNumber(SUN_OPACITY, t)));
-  set("--moon-o", String(sampleNumber(MOON_OPACITY, t)));
-  set("--shade", String(sampleNumber(SHADE, t)));
+  const dark = document.documentElement.classList.contains("dark");
+  for (const [name, value] of Object.entries(sceneVars(t, dark))) el.style.setProperty(name, value);
 }
 
 const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
@@ -70,6 +55,7 @@ export function DayInConjunto() {
   const [active, setActive] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [hoverZone, setHoverZone] = useState<ZoneId | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
   const setT = useCallback((t: number) => {
     tRef.current = t;
@@ -86,12 +72,21 @@ export function DayInConjunto() {
       setActive(index);
       const from = tRef.current;
       const to = index / (N - 1);
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return setT(to);
+      // Low-power devices and reduced motion jump straight to the hour.
+      const instant =
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("lite");
+      if (instant) return setT(to);
       const start = performance.now();
       const duration = 500 + Math.abs(to - from) * 900;
+      let painted = 0;
       const step = (now: number) => {
         const p = Math.min(1, (now - start) / duration);
-        setT(from + (to - from) * ease(p));
+        // Repainting the model is the costly part: ~30 fps is plenty for a
+        // change of light, and halves the work on slower phones.
+        if (p === 1 || now - painted >= 30) {
+          painted = now;
+          setT(from + (to - from) * ease(p));
+        }
         if (p < 1) tween.current = requestAnimationFrame(step);
       };
       tween.current = requestAnimationFrame(step);
@@ -101,7 +96,13 @@ export function DayInConjunto() {
 
   useEffect(() => {
     setT(0);
-    return () => cancelAnimationFrame(tween.current);
+    // The stage follows the site theme: repaint when it changes.
+    const observer = new MutationObserver(() => setT(tRef.current));
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(tween.current);
+    };
   }, [setT]);
 
   const activeRef = useRef(0);
@@ -109,12 +110,49 @@ export function DayInConjunto() {
     activeRef.current = active;
   }, [active]);
 
-  // Play walks through the day and loops back to dawn.
+  // Playing walks through the day one hour every few seconds and stops at
+  // 10 p. m.; the ring on the button shows the time to the next hour.
   useEffect(() => {
     if (!playing) return;
-    const id = window.setInterval(() => goTo((activeRef.current + 1) % N), AUTOPLAY_MS);
-    return () => window.clearInterval(id);
-  }, [playing, goTo]);
+    const id = window.setTimeout(() => {
+      if (activeRef.current >= N - 1) setPlaying(false);
+      else goTo(activeRef.current + 1);
+    }, AUTOPLAY_MS);
+    return () => window.clearTimeout(id);
+  }, [playing, active, goTo]);
+
+  // Scrolling away pauses it, so nothing runs out of sight.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!playing || !section) return;
+    let seen = false;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) seen = true;
+        else if (seen) setPlaying(false);
+      },
+      { threshold: 0.2 },
+    );
+    io.observe(section);
+    return () => io.disconnect();
+  }, [playing]);
+
+  // "Ver recorrido" in the hero starts the day from dawn.
+  useEffect(() => {
+    const start = () => {
+      goTo(0);
+      setPlaying(true);
+    };
+    window.addEventListener(DAY_TOUR_EVENT, start);
+    return () => window.removeEventListener(DAY_TOUR_EVENT, start);
+  }, [goTo]);
+
+  function togglePlay() {
+    if (playing) return setPlaying(false);
+    // Start right away: the next hour, or dawn again after the last one.
+    goTo(active >= N - 1 ? 0 : active + 1);
+    setPlaying(true);
+  }
 
   function manual(index: number) {
     setPlaying(false);
@@ -135,24 +173,22 @@ export function DayInConjunto() {
   }, [goTo]);
 
   const step = DAY_STEPS[active];
-  const ClockIcon = CLOCK_ICON[active];
-  const night = active >= 4;
   const zone = ZONES.find((z) => z.id === step.zone);
   const EventIcon = step.event.icon;
 
   return (
-    <section id="un-dia" aria-labelledby="un-dia-titulo" className="relative bg-bg py-20 sm:py-28">
+    <section ref={sectionRef} id="un-dia" aria-labelledby="un-dia-titulo" className="relative bg-bg py-20 sm:py-28">
       <div className="mx-auto max-w-page px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
           <h2 id="un-dia-titulo" className="text-4xl font-extrabold sm:text-5xl">
             Un día en Altos del Bosque
           </h2>
           <p className="mt-4 text-lg">
-            Recorre un día del conjunto con DomusCol. Mueve la línea de tiempo, toca una hora o una zona del mapa.
+            Recorre un día del conjunto con DomusCol. Mueve la línea de tiempo, toca una hora o una zona de la maqueta.
           </p>
         </div>
 
-        <div className="mt-10 grid items-center gap-6 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] lg:gap-10">
+        <div id="un-dia-maqueta" className="mt-10 grid items-center gap-6 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] lg:gap-10">
           <div className="order-2 lg:order-1">
             <article
               key={step.id}
@@ -180,33 +216,48 @@ export function DayInConjunto() {
           <div className="order-1 lg:order-2">
             <ConjuntoScene
               ref={sceneRef}
+              style={INITIAL_VARS}
+              step={active}
               mode={step.windows}
               highlight={hoverZone ?? step.zone}
               activeZone={step.zone}
               onPin={onPin}
               onPinHover={setHoverZone}
-              clock={
-                <p
-                  className={cn(
-                    "flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-bold tabular backdrop-blur-md transition-colors duration-500",
-                    night ? "bg-white/10 text-white" : "bg-white/70 text-navy",
-                  )}
-                >
-                  <ClockIcon aria-hidden className="h-4 w-4" />
-                  {step.time}
-                </p>
-              }
             />
 
             {/* Timeline */}
             <div className="mt-4 flex items-center gap-3 rounded-[20px] border border-line bg-surface p-3 sm:gap-4 sm:p-4">
               <button
                 type="button"
-                onClick={() => setPlaying((p) => !p)}
-                aria-label={playing ? "Pausar el día" : "Reproducir el día"}
-                className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-emerald text-navy-deep shadow-[0_8px_20px_-8px_rgb(16_185_129/0.8)] transition-transform active:scale-95"
+                onClick={togglePlay}
+                aria-label={playing ? "Pausar el recorrido" : active === N - 1 ? "Repetir el día" : "Reproducir el día"}
+                className="relative grid h-11 w-11 shrink-0 place-items-center rounded-full bg-emerald text-navy-deep shadow-[0_8px_20px_-8px_rgb(16_185_129/0.8)] transition-transform active:scale-95"
               >
-                {playing ? <Pause aria-hidden className="h-4 w-4" /> : <Play aria-hidden className="ml-0.5 h-4 w-4" />}
+                {playing && (
+                  <svg key={active} aria-hidden viewBox="0 0 52 52" className="pointer-events-none absolute -inset-1 h-[52px] w-[52px] -rotate-90">
+                    <circle cx="26" cy="26" r="24.5" fill="none" stroke="rgb(var(--c-emerald) / 0.22)" strokeWidth="2" />
+                    <circle
+                      cx="26"
+                      cy="26"
+                      r="24.5"
+                      fill="none"
+                      stroke="rgb(var(--c-emerald))"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      pathLength={1}
+                      strokeDasharray="1"
+                      className="play-ring"
+                      style={{ "--play-ms": `${AUTOPLAY_MS}ms` } as CSSProperties}
+                    />
+                  </svg>
+                )}
+                {playing ? (
+                  <Pause aria-hidden className="h-4 w-4" />
+                ) : active === N - 1 ? (
+                  <RotateCcw aria-hidden className="h-4 w-4" />
+                ) : (
+                  <Play aria-hidden className="ml-0.5 h-4 w-4" />
+                )}
               </button>
               <div className="min-w-0 flex-1">
                 <label htmlFor="hora-del-dia" className="sr-only">

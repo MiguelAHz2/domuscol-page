@@ -102,18 +102,125 @@ export const DAY_STEPS: DayStep[] = [
   },
 ];
 
-// Time-of-day palette, one key per step (6 a. m. → 10 p. m.).
-export const SKY_TOP = ["#9CB3D6", "#CADCF3", "#D3E4F8", "#C9DAF1", "#34507F", "#0A1B33"] as const;
-export const SKY_BOTTOM = ["#F1D2AE", "#EDF3FB", "#F1F6FC", "#E8EFF8", "#D9955A", "#15294A"] as const;
-export const FACE_TOP = ["#E4EAF3", "#F7F9FC", "#F8FAFC", "#F2F5F9", "#8E9BB6", "#223E63"] as const;
-export const FACE_LEFT = ["#C6D1E1", "#E1E8F1", "#E3E9F2", "#DBE3EE", "#63759A", "#172F50"] as const;
-export const FACE_RIGHT = ["#A9B7CD", "#C8D3E3", "#CAD5E4", "#C3CFE0", "#485B80", "#0F2340"] as const;
-export const GROUND = ["#B4C8AC", "#CFE0C5", "#D3E4C9", "#CADCC0", "#6E7F72", "#18302B"] as const;
-export const PAVING = ["#D6DCE6", "#E8ECF2", "#EBEEF3", "#E4E9F0", "#8D96A8", "#223249"] as const;
-export const WATER = ["#8DB6E6", "#7CB1F0", "#77AEF2", "#7BB0EE", "#4C6DA1", "#1B3E72"] as const;
-export const GLASS = ["#9DB0CB", "#B6CAE2", "#BACFE7", "#B1C5DF", "#51658A", "#1A3252"] as const;
-export const TREE = ["#6E9A76", "#5FA178", "#5EA478", "#5E9E76", "#3F5E51", "#16352C"] as const;
-export const SUN_X = [8, 30, 52, 72, 92, 70] as const;
-export const SUN_Y = [62, 22, 10, 16, 58, 18] as const;
-export const SUN_OPACITY = [0.85, 1, 1, 1, 0.9, 0] as const;
-export const MOON_OPACITY = [0, 0, 0, 0, 0, 1] as const;
+// Time-of-day palette for the isometric scene: one key per step
+// (6 a. m., 9 a. m., 11 a. m., 2 p. m., 6 p. m., 10 p. m.). Each entry is a
+// CSS variable the scene reads; the section interpolates them with time.
+// The lit face (+y, facing the viewer's left) is brighter than the +x face.
+export const SCENE_PALETTE: Record<string, readonly string[]> = {
+  "--face-top": ["#E9EDF3", "#F8FAFC", "#FAFBFD", "#F4F6FA", "#9AA6BE", "#23385A"],
+  "--face-left": ["#D9E0EA", "#EEF2F7", "#F1F4F8", "#EAEEF4", "#8090AD", "#1B2F4E"],
+  "--face-right": ["#B9C4D4", "#D2DAE5", "#D6DEE8", "#CDD6E2", "#5F7091", "#132541"],
+  "--brick-left": ["#B97353", "#C6774F", "#C97A51", "#BF744E", "#8E5A4A", "#4A3431"],
+  "--brick-right": ["#98593F", "#A45E3E", "#A8613F", "#9F5D3E", "#6E4537", "#352526"],
+  "--slab": ["#F2F5F9", "#FFFFFF", "#FFFFFF", "#FBFCFE", "#AAB5CA", "#2C4267"],
+  "--roof": ["#CBD3DE", "#DDE3EB", "#DFE5ED", "#D7DEE7", "#717F99", "#1A2C48"],
+  "--glass": ["#8FA3BF", "#A9BCD6", "#AEC1DA", "#A4B8D2", "#46597C", "#1A2F50"],
+  "--lobby": ["#5B6F8E", "#6B81A2", "#6F86A7", "#687F9F", "#34466A", "#0F1F38"],
+  "--ground": ["#9EBB8F", "#B2CF9D", "#B7D4A2", "#AECA98", "#5F7560", "#1A302A"],
+  "--tree-lo": ["#4B7C56", "#4C8B5B", "#4F905E", "#4B875A", "#314D3F", "#0F2620"],
+  "--tree-hi": ["#78A778", "#79BA82", "#7DBE86", "#77B37F", "#4B6A56", "#1D3B31"],
+  "--trunk": ["#6E5A48", "#7A634E", "#7A634E", "#7A634E", "#4A3E35", "#1C2226"],
+  "--paving": ["#DDD9D3", "#EEEBE6", "#F0EDE8", "#E9E5DF", "#8D8D93", "#243249"],
+  "--deck": ["#B98E68", "#C99D74", "#CCA077", "#C49870", "#7D6352", "#2E2A2C"],
+  "--water": ["#6FA6DB", "#58B4E8", "#55B7EC", "#5AB0E4", "#3E6A9E", "#16396B"],
+  "--water-hi": ["#A9CDEE", "#9AD6F5", "#98D9F7", "#9BD3F2", "#6F95C2", "#2B5690"],
+  "--asphalt": ["#707886", "#818998", "#848C9A", "#7D8593", "#4B5364", "#141C2A"],
+  "--base-left": ["#2B4B7A", "#2F5484", "#305687", "#2E5282", "#1F365A", "#0D1C33"],
+  "--base-right": ["#1D3860", "#213E69", "#22416C", "#203C66", "#152844", "#081426"],
+  "--door": ["#51627E", "#5E708A", "#5E708A", "#5E708A", "#34455F", "#0A1B33"],
+};
+
+export const SCENE_NUMBERS: Record<string, readonly number[]> = {
+  // The sun rises behind the cerros on the left, crosses the top of the
+  // sky (clear of the callouts) and sets behind the ones on the right.
+  // Positions are in the model's viewBox units.
+  "--sun-x": [-300, -262, -160, 168, 318, 318],
+  "--sun-y": [32, -52, -150, -158, 40, 130],
+  "--sun-o": [0.95, 1, 1, 1, 0.95, 0],
+  "--moon-o": [0, 0, 0, 0, 0.2, 1],
+  "--star-o": [0.3, 0, 0, 0, 0.35, 1],
+  "--cloud-o": [0.55, 0.9, 0.95, 0.9, 0.6, 0],
+  // Brightness for elements with fixed colours (cars, tank, pergola)
+  "--shade": [0.92, 1, 1, 1, 0.72, 0.42],
+  // Ground shadows fade out after sunset
+  "--shadow-o": [0.16, 0.2, 0.22, 0.2, 0.1, 0],
+  // Street lamps switch on at dusk
+  "--lamp-o": [0.55, 0, 0, 0, 0.85, 1],
+};
+
+// Numbers written with a unit (the rest are unitless).
+export const SCENE_UNITS: Record<string, string> = { "--sun-x": "px", "--sun-y": "px" };
+
+// The sun changes colour through the day, whatever the theme.
+export const SUN_PALETTE: Record<string, readonly string[]> = {
+  "--sun-core": ["#FFD7A1", "#FFF1C4", "#FFF8DC", "#FFF3CC", "#FFB477", "#FFB477"],
+  "--sun-halo": ["#FFB06A", "#FFD98A", "#FFE6A6", "#FFDF95", "#FF8B55", "#FF8B55"],
+};
+
+// The sky behind the model follows the site theme and the hour: a sky
+// gradient, Bogotá's cerros in two layers and the ground the model sits on.
+export const STAGE: Record<"light" | "dark", Record<string, readonly string[]>> = {
+  light: {
+    "--stage-top": ["#B7C8E6", "#B1CFF2", "#A8CBF3", "#AFCDF0", "#93A7D3", "#7084B1"],
+    "--stage-horizon": ["#F7D5BA", "#E2EEFA", "#E5F0FC", "#E1ECF9", "#F4C09D", "#A7B5D6"],
+    "--stage-bottom": ["#ECE8EE", "#EDF2F8", "#EEF3F9", "#ECF1F7", "#ECE3E5", "#CAD3E5"],
+    "--ridge-far": ["#D8CEDE", "#C8D7EB", "#C6D6EB", "#C7D6EA", "#D1B6C5", "#8F9EC5"],
+    "--ridge-near": ["#C7BED4", "#B6C8E1", "#B3C6E0", "#B5C7E0", "#B7A1B8", "#7D8CB6"],
+    "--cloud": ["#FDEBDD", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FBDCC9", "#FFFFFF"],
+  },
+  dark: {
+    "--stage-top": ["#0B1830", "#12305A", "#153663", "#12305A", "#131A38", "#040B18"],
+    "--stage-horizon": ["#3D2E4A", "#2A5A8C", "#2F6297", "#2A5989", "#56314A", "#0D1B33"],
+    "--stage-bottom": ["#0F1A2F", "#10223D", "#112541", "#10223D", "#141A2F", "#070F1E"],
+    "--ridge-far": ["#2A2944", "#244870", "#274C78", "#244870", "#33273F", "#0D1A33"],
+    "--ridge-near": ["#1E1D35", "#1B3A5E", "#1D3E65", "#1B3A5E", "#251C33", "#09152B"],
+    "--cloud": ["#7E7090", "#C4D4EA", "#CFDCEF", "#C4D4EA", "#90728A", "#3A4A66"],
+  },
+};
+
+/** Window event that starts the guided walk through the day (sent by the home hero). */
+export const DAY_TOUR_EVENT = "domuscol:recorrido-del-dia";
+
+// Callouts: what each zone reports at each hour. `state` colours the value:
+// ok (emerald), warn (amber, needs attention) or info (cobalt).
+export type CalloutState = "ok" | "warn" | "info";
+
+export interface Callout {
+  zone: ZoneId;
+  label: string;
+  values: readonly string[];
+  states: readonly CalloutState[];
+}
+
+export const CALLOUTS: Callout[] = [
+  {
+    zone: "tanques",
+    label: "Lavado de tanques",
+    values: ["Por programar", "Por programar", "20 oct, confirmado", "20 oct, confirmado", "20 oct, confirmado", "20 oct, confirmado"],
+    states: ["warn", "warn", "ok", "ok", "ok", "ok"],
+  },
+  {
+    zone: "administracion",
+    label: "Recaudo del mes",
+    values: ["68 %", "91 %", "91 %", "91 %", "91 %", "91 %"],
+    states: ["warn", "ok", "ok", "ok", "ok", "ok"],
+  },
+  {
+    zone: "cartelera",
+    label: "PQR abiertas",
+    values: ["0", "0", "0", "1", "1", "1"],
+    states: ["ok", "ok", "ok", "warn", "warn", "warn"],
+  },
+  {
+    zone: "salon",
+    label: "BBQ del sábado",
+    values: ["Libre", "Libre", "Libre", "Libre", "Reservada", "Reservada"],
+    states: ["info", "info", "info", "info", "ok", "ok"],
+  },
+  {
+    zone: "porteria",
+    label: "Visitantes hoy",
+    values: ["0", "1", "1", "2", "3", "3"],
+    states: ["info", "info", "info", "info", "info", "info"],
+  },
+];

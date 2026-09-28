@@ -81,7 +81,7 @@ export function People() {
                 <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[rgb(7_21_39/0.55)] to-transparent" />
                 <div className="glass glass-strong absolute inset-x-3 bottom-3 flex items-start gap-3 rounded-2xl p-3 sm:inset-x-4 sm:bottom-4">
                   <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-navy">
-                    <Isotipo className="h-7 w-7" />
+                    <Isotipo className="h-7 w-7 text-white" />
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="flex items-baseline justify-between gap-2 text-[11px] text-muted">

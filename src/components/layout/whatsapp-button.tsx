@@ -5,8 +5,9 @@ import { WhatsappIcon } from "@/components/ui/social-icons";
 import { whatsappHref } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-// Floating glass capsule. The label opens on hover or focus so the button
-// stays small over content on phones.
+// Floating button. Solid navy on purpose: a fixed element with live blur
+// has to be re-filtered on every scroll frame, which is what caused lag
+// on slower phones. The label opens on hover or focus.
 export function WhatsappButton() {
   const pathname = usePathname();
   const message =
@@ -21,7 +22,7 @@ export function WhatsappButton() {
       rel="noopener noreferrer"
       aria-label="Escríbenos por WhatsApp"
       className={cn(
-        "glass glass-navy glass-refract group fixed bottom-4 right-4 z-40 [--glass-a:rgb(13_34_63/0.86)] [--glass-b:rgb(10_28_52/0.8)] flex h-14 items-center rounded-full pl-[15px] pr-[15px] text-white sm:bottom-6 sm:right-6",
+        "group fixed bottom-4 right-4 z-40 flex h-14 items-center rounded-full bg-navy pl-[15px] pr-[15px] text-white shadow-[0_12px_30px_-10px_rgb(4_12_26/0.6)] ring-1 ring-white/10 sm:bottom-6 sm:right-6",
         "transition-[padding] duration-300 hover:pr-5 focus-visible:pr-5",
       )}
     >
