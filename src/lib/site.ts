@@ -1,17 +1,23 @@
-// Contact details and external URLs are placeholders until the
-// commercial channels are confirmed.
+// Site-wide settings. Anything that changes between environments or is
+// still a placeholder comes from environment variables (see .env.example),
+// with the production values as defaults.
+const env = (value: string | undefined, fallback: string) => (value && value.trim() ? value.trim() : fallback);
+
+const url = env(process.env.NEXT_PUBLIC_SITE_URL, "https://domuscol.me").replace(/\/$/, "");
+
 export const site = {
   name: "DomusCol",
-  url: "https://domuscol.co",
+  url,
   tagline: "Administración, convivencia y finanzas para la propiedad horizontal en Colombia.",
   description:
     "Gestión transparente, pagos en línea, control de accesos y convivencia en una sola plataforma adaptada a la Propiedad Horizontal en Colombia.",
-  residentsUrl: "https://app.domuscol.co/login",
-  whatsappNumber: "573000000000",
-  whatsappLabel: "+57 300 000 0000",
+  residentsUrl: env(process.env.NEXT_PUBLIC_RESIDENTS_URL, "https://app.domuscol.me/login"),
+  /** Digits only, with country code (57 for Colombia). */
+  whatsappNumber: env(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER, "573000000000"),
+  whatsappLabel: env(process.env.NEXT_PUBLIC_WHATSAPP_LABEL, "+57 300 000 0000"),
   whatsappMessage: "Hola, quiero información de DomusCol para mi conjunto.",
-  supportEmail: "soporte@domuscol.co",
-  salesEmail: "hola@domuscol.co",
+  supportEmail: env(process.env.NEXT_PUBLIC_SUPPORT_EMAIL, "soporte@domuscol.me"),
+  salesEmail: env(process.env.NEXT_PUBLIC_SALES_EMAIL, "hola@domuscol.me"),
   supportHours: "Lunes a sábado, 7:00 a. m. a 7:00 p. m.",
 } as const;
 

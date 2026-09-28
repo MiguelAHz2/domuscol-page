@@ -7,24 +7,17 @@ import bogotaCerros from "@/assets/images/bogota-cerros.jpg";
 import { buttonClass } from "@/components/ui/button";
 import { WhatsappIcon } from "@/components/ui/social-icons";
 import { UNITS_RANGE } from "@/lib/data/pricing";
+import {
+  CITIES,
+  DEMO_FIELD_ORDER,
+  HONEYPOT_FIELD,
+  validateDemoRequest,
+  type DemoErrors,
+  type DemoField,
+  type DemoRequestInput,
+} from "@/lib/demo-request";
 import { whatsappHref } from "@/lib/site";
 import { cn } from "@/lib/utils";
-
-const CITIES = [
-  "Bogotá",
-  "Medellín",
-  "Cali",
-  "Barranquilla",
-  "Cartagena",
-  "Bucaramanga",
-  "Pereira",
-  "Manizales",
-  "Santa Marta",
-  "Ibagué",
-  "Villavicencio",
-  "Cúcuta",
-  "Otra ciudad",
-];
 
 const STEPS = [
   { title: "Te contactamos en menos de un día hábil", text: "Por correo o WhatsApp, como prefieras." },
@@ -32,24 +25,9 @@ const STEPS = [
   { title: "Migración y capacitación", text: "Cargamos tus datos y capacitamos a administración y portería." },
 ];
 
-type Field = "nombre" | "correo" | "ciudad" | "conjunto" | "unidades" | "autorizacion";
-type Values = Record<Exclude<Field, "autorizacion">, string> & { autorizacion: boolean };
-type Errors = Partial<Record<Field, string>>;
-
-const FIELD_ORDER: Field[] = ["nombre", "correo", "ciudad", "conjunto", "unidades", "autorizacion"];
-
-function validate(v: Values): Errors {
-  const errors: Errors = {};
-  if (!v.nombre.trim()) errors.nombre = "Escribe tu nombre.";
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.correo.trim()))
-    errors.correo = "Escribe un correo válido, por ejemplo nombre@conjunto.com.";
-  if (!v.ciudad) errors.ciudad = "Elige la ciudad del conjunto.";
-  if (!v.conjunto.trim()) errors.conjunto = "Escribe el nombre del conjunto.";
-  const units = Number(v.unidades);
-  if (!Number.isInteger(units) || units < 1) errors.unidades = "Escribe el número de unidades, por ejemplo 120.";
-  if (!v.autorizacion) errors.autorizacion = "Necesitamos tu autorización para contactarte.";
-  return errors;
-}
+type Field = DemoField;
+type Values = DemoRequestInput;
+type Errors = DemoErrors;
 
 export function LeadForm() {
   const [units, setUnits] = useState<number>(UNITS_RANGE.initial);
@@ -63,6 +41,8 @@ export function LeadForm() {
   });
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [honeypot, setHoneypot] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
 
@@ -87,20 +67,42 @@ export function LeadForm() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    const found = validate(values);
-    setErrors(found);
-    const firstInvalid = FIELD_ORDER.find((f) => found[f]);
-    if (firstInvalid) {
-      formRef.current?.querySelector<HTMLElement>(`[name="${firstInvalid}"]`)?.focus();
-      return;
-    }
+    setServerError(null);
+    const found = validateDemoRequest(values);
+    if (showErrors(found)) return;
+
     setStatus("sending");
-    // Mock submission. Replace with the leads endpoint when the API exposes it.
-    await new Promise((r) => setTimeout(r, 900));
-    setStatus("sent");
+    try {
+      const res = await fetch("/api/solicitud-demo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...values, [HONEYPOT_FIELD]: honeypot }),
+      });
+      const body = (await res.json().catch(() => ({}))) as { success?: boolean; error?: string; data?: { fields?: Errors } };
+      if (res.ok && body.success) {
+        setStatus("sent");
+        return;
+      }
+      setStatus("idle");
+      if (body.data?.fields && showErrors(body.data.fields)) return;
+      setServerError(body.error ?? "No pudimos enviar tu solicitud. Inténtalo de nuevo o escríbenos por WhatsApp.");
+    } catch {
+      setStatus("idle");
+      setServerError("No hay conexión con el servidor. Revisa tu internet e inténtalo de nuevo, o escríbenos por WhatsApp.");
+    }
+  }
+
+  /** Marks invalid fields and focuses the first one. Returns true if there were errors. */
+  function showErrors(found: Errors) {
+    setErrors(found);
+    const firstInvalid = DEMO_FIELD_ORDER.find((f) => found[f]);
+    if (!firstInvalid) return false;
+    formRef.current?.querySelector<HTMLElement>(`[name="${firstInvalid}"]`)?.focus();
+    return true;
   }
 
   function reset() {
+    setServerError(null);
     setValues({ nombre: "", correo: "", ciudad: "", conjunto: "", unidades: String(units), autorizacion: false });
     setErrors({});
     setStatus("idle");
@@ -165,7 +167,7 @@ export function LeadForm() {
               </button>
             </div>
           ) : (
-            <form ref={formRef} noValidate onSubmit={onSubmit} className="grid gap-5 sm:grid-cols-2">
+            <form ref={formRef} noValidate onSubmit={onSubmit} className="relative grid gap-5 sm:grid-cols-2">
               <TextField
                 name="nombre"
                 label="Nombre"
@@ -254,6 +256,37 @@ export function LeadForm() {
                 </label>
                 <FieldError id="autorizacion-error" message={errors.autorizacion} />
               </div>
+
+              {/* Anti-spam: hidden from people and assistive tech; bots fill it */}
+              <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
+                <label htmlFor={HONEYPOT_FIELD}>No llenes este campo</label>
+                <input
+                  id={HONEYPOT_FIELD}
+                  name={HONEYPOT_FIELD}
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                />
+              </div>
+
+              {serverError && (
+                <div role="alert" className="sm:col-span-2 rounded-xl border border-[rgb(var(--c-danger)/0.35)] bg-[rgb(var(--c-danger)/0.06)] p-4 text-sm">
+                  <p className="font-semibold text-danger">{serverError}</p>
+                  <a
+                    href={whatsappHref(
+                      `Hola, quiero una demo de DomusCol para ${values.conjunto || "mi conjunto"}${values.unidades ? ` (${values.unidades} unidades)` : ""}.`,
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex items-center gap-1.5 font-semibold text-ink underline underline-offset-4"
+                  >
+                    <WhatsappIcon className="h-4 w-4" />
+                    Escribir por WhatsApp
+                  </a>
+                </div>
+              )}
 
               <div className="sm:col-span-2">
                 <button type="submit" disabled={status === "sending"} className={buttonClass("primary", "lg", "w-full")}>

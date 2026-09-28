@@ -13,7 +13,7 @@ export interface Unit {
 
 export const CONJUNTO = {
   name: "Conjunto Altos del Bosque",
-  subdomain: "altos-del-bosque.domuscol.co",
+  subdomain: "altos-del-bosque.domuscol.me",
   towers: 3,
   floors: 8,
   aptsPerFloor: 4,
