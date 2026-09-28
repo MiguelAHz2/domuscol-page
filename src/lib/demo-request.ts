@@ -45,9 +45,11 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export function validateDemoRequest(v: DemoRequestInput): DemoErrors {
   const errors: DemoErrors = {};
-  const nombre = v.nombre.trim();
+  // NFC so an accent typed as two code points still matches ("Medellín").
+  const nombre = v.nombre.normalize("NFC").trim();
   const correo = v.correo.trim();
-  const conjunto = v.conjunto.trim();
+  const conjunto = v.conjunto.normalize("NFC").trim();
+  const ciudad = v.ciudad.normalize("NFC");
   const unidades = Number(v.unidades);
 
   if (!nombre) errors.nombre = "Escribe tu nombre.";
@@ -56,7 +58,7 @@ export function validateDemoRequest(v: DemoRequestInput): DemoErrors {
   if (!EMAIL.test(correo) || correo.length > MAX.correo)
     errors.correo = "Escribe un correo válido, por ejemplo nombre@conjunto.com.";
 
-  if (!(CITIES as readonly string[]).includes(v.ciudad)) errors.ciudad = "Elige la ciudad del conjunto.";
+  if (!(CITIES as readonly string[]).includes(ciudad)) errors.ciudad = "Elige la ciudad del conjunto.";
 
   if (!conjunto) errors.conjunto = "Escribe el nombre del conjunto.";
   else if (conjunto.length > MAX.conjunto) errors.conjunto = `Usa máximo ${MAX.conjunto} caracteres.`;
@@ -72,10 +74,10 @@ export function validateDemoRequest(v: DemoRequestInput): DemoErrors {
 /** Trimmed, typed request. Call only after validateDemoRequest returned no errors. */
 export function normalizeDemoRequest(v: DemoRequestInput): DemoRequest {
   return {
-    nombre: v.nombre.trim(),
+    nombre: v.nombre.normalize("NFC").trim(),
     correo: v.correo.trim().toLowerCase(),
-    ciudad: v.ciudad,
-    conjunto: v.conjunto.trim(),
+    ciudad: v.ciudad.normalize("NFC"),
+    conjunto: v.conjunto.normalize("NFC").trim(),
     unidades: Number(v.unidades),
     autorizacion: true,
   };
