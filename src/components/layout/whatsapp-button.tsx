@@ -2,10 +2,11 @@
 
 import { usePathname } from "next/navigation";
 import { WhatsappIcon } from "@/components/ui/social-icons";
+import { trackEvent } from "@/lib/events";
 import { whatsappHref } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-// Floating button. Solid navy on purpose: a fixed element with live blur
+// Floating button. Solid espresso on purpose: a fixed element with live blur
 // has to be re-filtered on every scroll frame, which is what caused lag
 // on slower phones. The label opens on hover or focus.
 export function WhatsappButton() {
@@ -21,8 +22,9 @@ export function WhatsappButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Escríbenos por WhatsApp"
+      onClick={() => trackEvent("WhatsApp", { origen: "botón flotante", pagina: pathname })}
       className={cn(
-        "group fixed bottom-4 right-4 z-40 flex h-14 items-center rounded-full bg-navy pl-[15px] pr-[15px] text-white shadow-[0_12px_30px_-10px_rgb(4_12_26/0.6)] ring-1 ring-white/10 sm:bottom-6 sm:right-6",
+        "group fixed bottom-4 right-4 z-40 flex h-14 items-center rounded-full bg-espresso pl-[15px] pr-[15px] text-white shadow-[0_12px_30px_-10px_rgb(16_13_11/0.6)] ring-1 ring-white/10 sm:bottom-6 sm:right-6",
         "transition-[padding] duration-300 hover:pr-5 focus-visible:pr-5",
       )}
     >

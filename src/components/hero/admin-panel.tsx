@@ -86,7 +86,7 @@ export function AdminPanel({ units, residentUnitId, justPaidId, activity }: Admi
         <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-body tabular">
           <Legend swatch="bg-emerald" label="Al día" value={paid} />
           <Legend swatch="bg-window" label="Pendiente" value={pending} />
-          <Legend swatch="bg-amber" label="En mora" value={overdue} />
+          <Legend swatch="bg-overdue" label="En mora" value={overdue} />
         </ul>
 
         <div className="mt-4">

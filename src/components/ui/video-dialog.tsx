@@ -58,7 +58,7 @@ export const VideoDialog = forwardRef<VideoDialogHandle>(function VideoDialog(_,
       aria-label="Video demostrativo de DomusCol"
       onClose={() => setOpen(false)}
       onClick={(e) => e.target === dialogRef.current && close()}
-      className="w-[min(60rem,calc(100vw-2rem))] overflow-hidden rounded-[20px] border border-white/10 bg-navy-deep p-0 shadow-float open:animate-enter"
+      className="w-[min(60rem,calc(100vw-2rem))] overflow-hidden rounded-[20px] border border-white/10 bg-espresso-deep p-0 shadow-float open:animate-enter"
     >
       <div className="relative aspect-video bg-black">
         {open &&

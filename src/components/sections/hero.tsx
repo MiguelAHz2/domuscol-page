@@ -9,6 +9,7 @@ import { Skyline } from "@/components/hero/skyline";
 import { buttonClass } from "@/components/ui/button";
 import { hasDemoVideo, VideoDialog, type VideoDialogHandle } from "@/components/ui/video-dialog";
 import { DAY_TOUR_EVENT } from "@/lib/data/day";
+import { trackEvent } from "@/lib/events";
 import {
   buildUnits,
   DEMO_RESIDENTS,
@@ -37,6 +38,7 @@ export function Hero() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
     window.dispatchEvent(new Event(DAY_TOUR_EVENT));
+    trackEvent("Recorrido del día");
   }
 
   const resident = DEMO_RESIDENTS[residentIndex];
@@ -76,7 +78,7 @@ export function Hero() {
       {/* Scrim keeps the headline legible over the towers */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgb(var(--c-bg)/0.9)_0%,rgb(var(--c-bg)/0.55)_38%,transparent_62%)] xl:bg-[linear-gradient(90deg,rgb(var(--c-bg)/0.92)_0%,rgb(var(--c-bg)/0.6)_34%,transparent_52%)] dark:bg-[linear-gradient(90deg,rgb(var(--c-navy)/0.82)_0%,rgb(var(--c-navy)/0.45)_38%,transparent_62%)] dark:xl:bg-[linear-gradient(90deg,rgb(var(--c-navy)/0.85)_0%,rgb(var(--c-navy)/0.5)_34%,transparent_52%)]"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgb(var(--c-bg)/0.9)_0%,rgb(var(--c-bg)/0.55)_38%,transparent_62%)] xl:bg-[linear-gradient(90deg,rgb(var(--c-bg)/0.92)_0%,rgb(var(--c-bg)/0.6)_34%,transparent_52%)] dark:bg-[linear-gradient(90deg,rgb(var(--c-espresso)/0.82)_0%,rgb(var(--c-espresso)/0.45)_38%,transparent_62%)] dark:xl:bg-[linear-gradient(90deg,rgb(var(--c-espresso)/0.85)_0%,rgb(var(--c-espresso)/0.5)_34%,transparent_52%)]"
       />
 
       <div className="relative mx-auto grid max-w-page gap-14 px-4 pb-20 pt-14 sm:px-6 sm:pt-20 lg:px-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,620px)] xl:items-center xl:gap-12 xl:pb-24">
@@ -105,7 +107,7 @@ export function Hero() {
             )}
           </div>
           <p className="animate-rise mt-8 flex items-start gap-2.5 text-sm text-muted [animation-delay:320ms] dark:text-white/60">
-            <span aria-hidden className="mt-[7px] h-2 w-2 shrink-0 rounded-[2px] bg-emerald" />
+            <span aria-hidden className="mt-[7px] h-2 w-2 shrink-0 rounded-[2px] bg-accent" />
             La Fase 1 está en desarrollo. Los conjuntos que soliciten demo ahora entran primero al lanzamiento.
           </p>
         </div>
@@ -119,7 +121,7 @@ export function Hero() {
                 justPaidId={justPaidId}
                 activity={activity}
               />
-              <figcaption className="mt-5 max-w-[26rem] rounded-2xl border border-line bg-surface/85 px-4 py-3 text-sm text-body dark:border-white/10 dark:bg-navy-deep/60 dark:text-white/70">
+              <figcaption className="mt-5 max-w-[26rem] rounded-2xl border border-line bg-surface/85 px-4 py-3 text-sm text-body dark:border-white/10 dark:bg-espresso-deep/60 dark:text-white/70">
                 Paga la cuota de <span className="font-semibold text-ink dark:text-white">{resident.unitId}</span> desde el celular y
                 mira cómo se enciende su ventana en el panel del administrador.
               </figcaption>

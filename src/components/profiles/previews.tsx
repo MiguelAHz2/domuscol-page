@@ -21,7 +21,7 @@ function AdminReport() {
           <p className="text-xs text-muted">Informe de gestión</p>
           <p className="text-base font-bold text-ink">Septiembre 2026</p>
         </div>
-        <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-navy px-3 py-1.5 text-xs font-semibold text-white dark:bg-surface-2 dark:text-ink">
+        <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-espresso px-3 py-1.5 text-xs font-semibold text-white dark:bg-surface-2 dark:text-ink">
           <Download aria-hidden className="h-3.5 w-3.5" /> Exportar PDF
         </span>
       </div>
@@ -37,7 +37,7 @@ function AdminReport() {
                   {r.value.toLocaleString("es-CO")}
                 </span>
                 <div
-                  className={cn("rounded-t-md", last ? "bg-emerald" : "bg-[rgb(var(--c-cobalt)/0.22)]")}
+                  className={cn("rounded-t-md", last ? "bg-accent" : "bg-chart-muted")}
                   style={{ height: `${(r.value / max) * 100}%` }}
                 />
               </div>
@@ -80,7 +80,7 @@ function ResidentFeed() {
     },
     {
       icon: Megaphone,
-      tone: "cobalt",
+      tone: "accent",
       title: "Circular 018 de la administración",
       text: "Corte de agua el martes 20 de octubre, de 8:00 a. m. a 12:00 m., por lavado de tanques.",
       meta: "Confirmar lectura",
@@ -100,7 +100,7 @@ function ResidentFeed() {
         <p className="text-sm font-bold text-ink">Hola, Laura</p>
         <span className="relative grid h-9 w-9 place-items-center rounded-xl border border-line bg-surface text-ink">
           <Bell aria-hidden className="h-4 w-4" />
-          <span aria-hidden className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-emerald" />
+          <span aria-hidden className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-accent" />
         </span>
       </div>
       <ul className="space-y-3">
@@ -113,7 +113,7 @@ function ResidentFeed() {
               className={cn(
                 "grid h-10 w-10 shrink-0 place-items-center rounded-xl",
                 tone === "emerald" && "bg-[rgb(var(--c-emerald)/0.14)] text-emerald-ink",
-                tone === "cobalt" && "bg-[rgb(var(--c-cobalt)/0.1)] text-cobalt",
+                tone === "accent" && "bg-[rgb(var(--c-accent)/0.12)] text-accent-ink",
                 tone === "neutral" && "bg-surface-2 text-body",
               )}
             >
@@ -122,7 +122,7 @@ function ResidentFeed() {
             <div className="min-w-0">
               <p className="text-sm font-semibold text-ink">{title}</p>
               <p className="mt-0.5 text-sm text-body">{text}</p>
-              <p className={cn("mt-1.5 text-xs", tone === "cobalt" ? "font-semibold text-cobalt" : "text-muted")}>{meta}</p>
+              <p className={cn("mt-1.5 text-xs", tone === "accent" ? "font-semibold text-accent-ink" : "text-muted")}>{meta}</p>
             </div>
           </li>
         ))}
@@ -158,7 +158,7 @@ function BoardView() {
               </div>
               <div className="mt-1 h-1.5 rounded-full bg-surface-2">
                 <div
-                  className={cn("h-full rounded-full", r.value > 90 ? "bg-amber" : "bg-cobalt")}
+                  className={cn("h-full rounded-full", r.value > 90 ? "bg-amber" : "bg-chart-muted")}
                   style={{ width: `${r.value}%` }}
                 />
               </div>

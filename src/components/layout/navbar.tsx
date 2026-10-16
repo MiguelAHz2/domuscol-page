@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 
 const isActive = (pathname: string, href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
-// Floating glass capsule, iOS style: white glass in light mode, navy glass
+// Floating glass capsule, iOS style: white glass in light mode, espresso glass
 // in dark mode.
 export function Navbar() {
   const pathname = usePathname();
@@ -50,9 +50,9 @@ export function Navbar() {
           "glass mx-auto max-w-[76rem] rounded-[22px] transition-shadow duration-300",
           // Denser once content scrolls under it, nearly opaque with the menu open.
           open
-            ? "[--glass-a:rgb(255_255_255/0.97)] [--glass-b:rgb(255_255_255/0.95)] dark:[--glass-a:rgb(13_34_63/0.97)] dark:[--glass-b:rgb(10_28_52/0.95)]"
+            ? "[--glass-a:rgb(255_255_255/0.97)] [--glass-b:rgb(255_255_255/0.95)] dark:[--glass-a:rgb(36_30_27/0.97)] dark:[--glass-b:rgb(24_20_18/0.95)]"
             : scrolled &&
-                "[--glass-a:rgb(255_255_255/0.86)] [--glass-b:rgb(255_255_255/0.78)] dark:[--glass-a:rgb(13_34_63/0.86)] dark:[--glass-b:rgb(10_28_52/0.8)]",
+                "[--glass-a:rgb(255_255_255/0.66)] [--glass-b:rgb(250_246_241/0.46)] dark:[--glass-a:rgb(36_30_27/0.86)] dark:[--glass-b:rgb(24_20_18/0.8)]",
         )}
       >
         <nav aria-label="Principal" className="flex h-14 items-center gap-4 pl-3 pr-2 sm:pl-4">

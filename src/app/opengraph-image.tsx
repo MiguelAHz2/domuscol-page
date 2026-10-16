@@ -1,23 +1,29 @@
 import { ImageResponse } from "next/og";
+import { BRAND, isotypeMarkup } from "@/components/brand/isotype";
+import { site } from "@/lib/site";
 
-// Share image for WhatsApp, LinkedIn and search: the facade of lit windows
-// next to the name and promise, in the brand colours.
+// Share image for WhatsApp, LinkedIn and search: the brand kit's social cover
+// (asset 24), with the site's real domain.
 // Edge runtime: @vercel/og's Node build fails to resolve its font path on Windows.
 export const runtime = "edge";
 export const alt = "DomusCol, administración de propiedad horizontal en Colombia";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// Deterministic "al día" pattern for 3 towers x 8 floors x 4 units.
-function windowState(i: number) {
-  const x = Math.sin(i * 12.9898) * 43758.5453;
-  const r = x - Math.floor(x);
-  return r < 0.1 ? "mora" : r < 0.28 ? "pendiente" : "al-dia";
-}
+const isotype = `data:image/svg+xml;base64,${btoa(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="260" height="290" viewBox="16 3 128 145">${isotypeMarkup(BRAND.white)}</svg>`,
+)}`;
 
-const COLORS = { "al-dia": "#10B981", pendiente: "#1E3A5F", mora: "#D99A2B" } as const;
+// The site's typeface, so the wordmark keeps its ExtraBold "Domus".
+const font = (url: URL) => fetch(url).then((r) => r.arrayBuffer());
 
-export default function OpengraphImage() {
+export default async function OpengraphImage() {
+  const domain = new URL(site.url).hostname.toUpperCase();
+  const [medium, bold, extraBold] = await Promise.all([
+    font(new URL("../../node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-500-normal.woff", import.meta.url)),
+    font(new URL("../../node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-700-normal.woff", import.meta.url)),
+    font(new URL("../../node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-800-normal.woff", import.meta.url)),
+  ]);
   return new ImageResponse(
     (
       <div
@@ -25,42 +31,80 @@ export default function OpengraphImage() {
           width: "100%",
           height: "100%",
           display: "flex",
-          background: "linear-gradient(135deg, #0D223F 0%, #0A1B33 60%, #13305A 100%)",
-          padding: "72px 80px",
+          position: "relative",
+          background: BRAND.espresso,
           color: "white",
-          fontFamily: "sans-serif",
+          fontFamily: "Jakarta",
+          fontWeight: 500,
         }}
       >
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: 600 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-            <div style={{ display: "flex", width: 56, height: 56, borderRadius: 14, background: "rgba(255,255,255,0.1)", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ display: "flex", width: 22, height: 22, borderRadius: 5, background: "#10B981" }} />
-            </div>
-            <div style={{ fontSize: 40, fontWeight: 800, letterSpacing: -1 }}>DomusCol</div>
+        {/* Terracota halo behind the isotype */}
+        <div
+          style={{
+            position: "absolute",
+            left: 620,
+            top: -45,
+            width: 720,
+            height: 720,
+            borderRadius: 360,
+            background: "rgba(224, 109, 68, 0.08)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            left: 740,
+            top: 75,
+            width: 480,
+            height: 480,
+            borderRadius: 240,
+            border: "1.5px dashed rgba(224, 109, 68, 0.22)",
+          }}
+        />
+
+        <div style={{ display: "flex", flexDirection: "column", position: "absolute", left: 82, top: 96 }}>
+          <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: 5, color: BRAND.terracota }}>
+            PLATAFORMA SAAS · PROPIEDAD HORIZONTAL
           </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ fontSize: 58, fontWeight: 800, lineHeight: 1.05, letterSpacing: -2 }}>
-              La transformación digital que tu conjunto residencial necesita
-            </div>
-            <div style={{ marginTop: 24, fontSize: 26, color: "rgba(255,255,255,0.72)" }}>
-              Pagos en línea, portería y convivencia. Hecho para la Ley 675.
-            </div>
+          <div style={{ display: "flex", marginTop: 18, fontSize: 88, fontWeight: 800, letterSpacing: -3, lineHeight: 1 }}>
+            Domus<span style={{ color: BRAND.terracota, fontWeight: 500 }}>Col</span>
+          </div>
+          <div style={{ marginTop: 22, fontSize: 18, fontWeight: 700, letterSpacing: 8, color: "#C4B8B1" }}>
+            SOLUCIONES INTEGRADAS
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", marginTop: 52, fontSize: 26, color: "#EDE6DF", lineHeight: 1.4 }}>
+            <span>Administración inteligente de edificios, finanzas,</span>
+            <span>asambleas, portería QR y comunidad residencial.</span>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              marginTop: 40,
+              alignSelf: "flex-start",
+              padding: "16px 28px",
+              borderRadius: 12,
+              background: BRAND.terracota,
+              color: BRAND.espresso,
+              fontSize: 16,
+              fontWeight: 800,
+              letterSpacing: 1.5,
+            }}
+          >
+            {domain}
           </div>
         </div>
-        <div style={{ display: "flex", marginLeft: "auto", alignItems: "flex-end", gap: 18 }}>
-          {[0, 1, 2].map((t) => (
-            <div
-              key={t}
-              style={{ display: "flex", flexWrap: "wrap", width: 132, gap: 6, padding: 10, borderRadius: "10px 10px 0 0", background: "#16305A" }}
-            >
-              {Array.from({ length: 32 }, (_, i) => (
-                <div key={i} style={{ width: 22, height: 26, borderRadius: 4, background: COLORS[windowState(t * 32 + i)] }} />
-              ))}
-            </div>
-          ))}
-        </div>
+
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={isotype} width={260} height={290} alt="" style={{ position: "absolute", left: 850, top: 170 }} />
       </div>
     ),
-    size,
+    {
+      ...size,
+      fonts: [
+        { name: "Jakarta", data: medium, weight: 500, style: "normal" },
+        { name: "Jakarta", data: bold, weight: 700, style: "normal" },
+        { name: "Jakarta", data: extraBold, weight: 800, style: "normal" },
+      ],
+    },
   );
 }

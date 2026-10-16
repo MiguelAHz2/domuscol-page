@@ -14,7 +14,7 @@ interface FacadeProps {
 const windowClass: Record<Unit["status"], string> = {
   "al-dia": "bg-emerald shadow-[0_0_10px_rgb(var(--c-emerald)/0.45)]",
   pendiente: "bg-window",
-  mora: "bg-amber shadow-[0_0_8px_rgb(var(--c-amber)/0.35)]",
+  mora: "bg-overdue shadow-[0_0_8px_rgb(var(--c-overdue)/0.35)]",
 };
 
 export function Facade({ units, residentUnitId, justPaidId }: FacadeProps) {
@@ -48,14 +48,14 @@ export function Facade({ units, residentUnitId, justPaidId }: FacadeProps) {
         role="img"
         aria-label={`Fachada del conjunto: ${counts.alDia} unidades al día, ${counts.pendiente} pendientes y ${counts.mora} en mora.`}
         onMouseLeave={() => setHovered(null)}
-        className="relative overflow-hidden rounded-xl bg-gradient-to-b from-navy-deep to-navy px-3 pt-5 sm:px-4"
+        className="relative overflow-hidden rounded-xl bg-gradient-to-b from-surface-2 to-band px-3 pt-5 dark:from-espresso-deep dark:to-espresso sm:px-4"
       >
         <div className="grid grid-cols-3 items-end gap-2.5 sm:gap-3">
           {towers.map((tower, i) => (
             <div key={i} className="flex flex-col">
               {/* Rooftop: water tank + machine room, as on most Colombian towers */}
-              <div aria-hidden className="mx-auto mb-0 h-2 w-1/3 rounded-t-sm bg-navy-raised" />
-              <div className="grid grid-cols-4 gap-[3px] rounded-t-md bg-navy-raised p-1.5 sm:gap-1 sm:p-2">
+              <div aria-hidden className="mx-auto mb-0 h-2 w-1/3 rounded-t-sm bg-tower" />
+              <div className="grid grid-cols-4 gap-[3px] rounded-t-md bg-tower p-1.5 sm:gap-1 sm:p-2">
                 {tower.map((unit) => {
                   const isResident = unit.id === residentUnitId && unit.status !== "al-dia";
                   const lit = unit.status !== "pendiente";
@@ -68,14 +68,14 @@ export function Facade({ units, residentUnitId, justPaidId }: FacadeProps) {
                         "aspect-[5/6] rounded-[2px] transition-colors duration-500 sm:rounded-[3px]",
                         windowClass[unit.status],
                         unit.id === justPaidId ? "window-just-paid" : lit && "window-lit",
-                        isResident && "outline outline-2 outline-offset-1 outline-white",
-                        hovered?.id === unit.id && !isResident && "outline outline-1 outline-offset-1 outline-white/70",
+                        isResident && "outline outline-2 outline-offset-1 outline-espresso dark:outline-white",
+                        hovered?.id === unit.id && !isResident && "outline outline-1 outline-offset-1 outline-[rgb(var(--c-ink)/0.55)] dark:outline-white/70",
                       )}
                     />
                   );
                 })}
               </div>
-              <p className="border-t border-white/15 py-1.5 text-center text-[11px] font-medium text-white/60">
+              <p className="border-t border-[rgb(var(--c-ink)/0.14)] py-1.5 text-center text-[11px] font-medium text-muted dark:border-white/15 dark:text-white/60">
                 Torre {i + 1}
               </p>
             </div>

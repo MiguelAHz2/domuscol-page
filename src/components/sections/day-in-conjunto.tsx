@@ -202,7 +202,7 @@ export function DayInConjunto() {
               <h3 className="mt-3 text-[1.75rem] font-bold leading-tight tracking-[-0.02em]">{step.title}</h3>
               <p className="mt-3 text-lg">{step.text}</p>
               <div className="mt-7 flex items-center gap-3 border-t border-line pt-5">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-emerald text-navy-deep">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent text-espresso-deep">
                   <EventIcon aria-hidden className="h-4 w-4" />
                 </span>
                 <div className="min-w-0">
@@ -231,17 +231,17 @@ export function DayInConjunto() {
                 type="button"
                 onClick={togglePlay}
                 aria-label={playing ? "Pausar el recorrido" : active === N - 1 ? "Repetir el día" : "Reproducir el día"}
-                className="relative grid h-11 w-11 shrink-0 place-items-center rounded-full bg-emerald text-navy-deep shadow-[0_8px_20px_-8px_rgb(16_185_129/0.8)] transition-transform active:scale-95"
+                className="relative grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent text-espresso-deep shadow-[0_8px_20px_-8px_rgb(224_109_68/0.75)] hover:bg-copper transition-transform active:scale-95"
               >
                 {playing && (
                   <svg key={active} aria-hidden viewBox="0 0 52 52" className="pointer-events-none absolute -inset-1 h-[52px] w-[52px] -rotate-90">
-                    <circle cx="26" cy="26" r="24.5" fill="none" stroke="rgb(var(--c-emerald) / 0.22)" strokeWidth="2" />
+                    <circle cx="26" cy="26" r="24.5" fill="none" stroke="rgb(var(--c-accent) / 0.22)" strokeWidth="2" />
                     <circle
                       cx="26"
                       cy="26"
                       r="24.5"
                       fill="none"
-                      stroke="rgb(var(--c-emerald))"
+                      stroke="rgb(var(--c-accent))"
                       strokeWidth="2"
                       strokeLinecap="round"
                       pathLength={1}

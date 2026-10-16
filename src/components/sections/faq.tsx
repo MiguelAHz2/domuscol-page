@@ -12,7 +12,7 @@ export function Faq() {
   const [open, setOpen] = useState<string | null>(FAQ[0].id);
 
   return (
-    <section aria-label="Preguntas y respuestas" className="bg-surface py-16 sm:py-24">
+    <section aria-label="Preguntas y respuestas" className="bg-section py-16 sm:py-24">
       <div className="mx-auto grid max-w-page gap-8 px-4 sm:px-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,0.7fr)] lg:gap-10 lg:px-8">
         <ul className="border-t border-line">
           {FAQ.map((item) => {
@@ -26,13 +26,13 @@ export function Faq() {
                     aria-expanded={isOpen}
                     aria-controls={`faq-${item.id}-respuesta`}
                     onClick={() => setOpen(isOpen ? null : item.id)}
-                    className="flex w-full items-center justify-between gap-6 rounded-lg py-6 text-left text-lg font-semibold text-ink transition-colors hover:text-cobalt"
+                    className="flex w-full items-center justify-between gap-6 rounded-lg py-6 text-left text-lg font-semibold text-ink transition-colors hover:text-accent-ink"
                   >
                     {item.question}
                     <span
                       className={cn(
                         "grid h-8 w-8 shrink-0 place-items-center rounded-full transition-[transform,background-color] duration-300",
-                        isOpen ? "rotate-180 bg-navy text-white dark:bg-white/15" : "border border-line text-muted",
+                        isOpen ? "rotate-180 bg-espresso text-white dark:bg-white/15" : "border border-line text-muted",
                       )}
                     >
                       <ChevronDown aria-hidden className="h-4 w-4" />

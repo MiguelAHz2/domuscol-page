@@ -17,7 +17,10 @@ const LOT = 18;
 const FLOOR = 1.45;
 const PLINTH = 2;
 const WARM = "#FFD08C";
-const EMERALD = "#10B981";
+// Windows of units "al día" use the status green; highlights use the
+// brand terracota.
+const PAID = "#10B981";
+const ACCENT = "#E06D44";
 const FILL_T = "fill 500ms ease";
 // Things with their own fixed colours (cars, tank, panels) dim at dusk.
 const SHADE: CSSProperties = { filter: "brightness(var(--shade))" };
@@ -274,7 +277,7 @@ function windowFill(mode: WindowMode, rank: number) {
     case "dawn":
       return rank < 0.2 ? WARM : "var(--glass)";
     case "paid":
-      return rank < 0.91 ? EMERALD : "var(--glass)";
+      return rank < 0.91 ? PAID : "var(--glass)";
     case "dusk":
       return rank < 0.45 ? WARM : "var(--glass)";
     case "night":
@@ -496,10 +499,10 @@ function Cartelera() {
       <Solid box={{ x0: 9.1, x1: 9.22, y0: 15.38, y1: 15.5, z1: 1.9 }} {...post} />
       <Solid box={{ x0: 10.38, x1: 10.5, y0: 15.38, y1: 15.5, z1: 1.9 }} {...post} />
       <Solid box={{ x0: 8.95, x1: 10.65, y0: 15.34, y1: 15.52, z0: 0.75, z1: 2 }} left="var(--slab)" />
-      <polygon points={quadY(15.52, 9.1, 9.7, 1.3, 1.85)} fill="#2458E6" opacity={0.75} />
+      <polygon points={quadY(15.52, 9.1, 9.7, 1.3, 1.85)} fill="#E06D44" opacity={0.8} />
       <polygon points={quadY(15.52, 9.1, 9.7, 0.9, 1.18)} fill="#F8FAFC" opacity={0.9} />
-      <polygon points={quadY(15.52, 9.85, 10.5, 1.5, 1.88)} fill={EMERALD} opacity={0.85} />
-      <polygon points={quadY(15.52, 9.85, 10.5, 0.95, 1.38)} fill="#D99A2B" opacity={0.8} />
+      <polygon points={quadY(15.52, 9.85, 10.5, 1.5, 1.88)} fill="#F4A27E" opacity={0.9} />
+      <polygon points={quadY(15.52, 9.85, 10.5, 0.95, 1.38)} fill="#F59E0B" opacity={0.75} />
       <Solid box={{ x0: 8.85, x1: 10.75, y0: 15.25, y1: 15.62, z0: 2, z1: 2.1 }} top="var(--roof)" left="var(--slab)" />
     </>
   );
@@ -534,7 +537,7 @@ function Car({ car }: { car: CarDef }) {
     : [quadX(x1, y0 + 0.3, y0 + 0.62, 0, 0.3), quadX(x1, y1 - 0.62, y1 - 0.3, 0, 0.3)];
   return (
     <g style={SHADE}>
-      <polygon points={flat(x0 - 0.05, x1 + 0.15, y0 - 0.05, y1 + 0.05, 0.01)} fill="#0D223F" opacity={0.14} />
+      <polygon points={flat(x0 - 0.05, x1 + 0.15, y0 - 0.05, y1 + 0.05, 0.01)} fill="#181412" opacity={0.14} />
       <Solid box={{ x0, x1, y0, y1, z0: 0.12, z1: 0.6 }} top={top} left={left} right={right} />
       {wheels.map((w) => (
         <polygon key={w} points={w} fill="#1B2433" />
@@ -579,7 +582,7 @@ function Tree({ tree }: { tree: TreeDef }) {
   const [cx, cy] = P(x, y, (tall ? 2.2 : 1.9) * s);
   return (
     <>
-      <ellipse cx={bx + 5 * s} cy={by + 1} rx={12 * s} ry={5 * s} fill="#0D223F" style={{ opacity: "calc(var(--shadow-o) * 1.3)" }} />
+      <ellipse cx={bx + 5 * s} cy={by + 1} rx={12 * s} ry={5 * s} fill="#181412" style={{ opacity: "calc(var(--shadow-o) * 1.3)" }} />
       <line x1={bx} y1={by} x2={cx} y2={cy + 4} stroke="var(--trunk)" strokeWidth={2.6 * s} strokeLinecap="round" />
       {tall ? (
         <>
@@ -763,7 +766,7 @@ const Ground = memo(function Ground() {
   return (
     <>
       <ellipse cx={0} cy={250} rx={470} ry={200} fill="url(#cs-floor)" />
-      {/* Diorama slab: navy base, a concrete lip, lawn on top */}
+      {/* Diorama slab: espresso base, a concrete lip, lawn on top */}
       <polygon points={lot.left} fill="var(--base-left)" />
       <polygon points={lot.right} fill="var(--base-right)" />
       <polygon points={quadY(LOT, 0, LOT, -0.3, 0)} fill="var(--face-left)" />
@@ -809,7 +812,7 @@ const Ground = memo(function Ground() {
       </g>
 
       {/* Cast shadows, clipped to the lot */}
-      <g clipPath="url(#cs-lot)" fill="#0D223F" style={{ opacity: "var(--shadow-o)" }}>
+      <g clipPath="url(#cs-lot)" fill="#181412" style={{ opacity: "var(--shadow-o)" }}>
         {TOWERS.map(({ def, top }) => (
           <polygon key={def.id} points={castShadow(def.x0, def.x1, def.y0, def.y1, top)} />
         ))}
@@ -904,7 +907,7 @@ const ZONE_SHAPE: Record<ZoneId, { glow?: [number, number, number]; outline?: Bo
   porteria: { glow: [16.7, 14.4, 2.6], outline: [{ x0: 15.6, x1: 17.8, y0: 12.6, y1: 15.4, z1: 2.7 }] },
 };
 
-const MARKER: Record<CalloutState, string> = { ok: "bg-emerald", warn: "bg-amber", info: "bg-cobalt" };
+const MARKER: Record<CalloutState, string> = { ok: "bg-emerald", warn: "bg-amber", info: "bg-info" };
 
 function toPercent([sx, sy]: Pt) {
   return { left: `${((sx - VB.x) / VB.w) * 100}%`, top: `${((sy - VB.y) / VB.h) * 100}%` };
@@ -944,8 +947,8 @@ export const ConjuntoScene = forwardRef<HTMLDivElement, SceneProps>(function Con
       <svg viewBox={`${VB.x} ${VB.y} ${VB.w} ${VB.h}`} role="img" aria-label="Maqueta del Conjunto Altos del Bosque" className="relative block w-full">
         <defs>
           <linearGradient id="cs-ao" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0.3" stopColor="#0D223F" stopOpacity={0} />
-            <stop offset="1" stopColor="#0D223F" stopOpacity={0.16} />
+            <stop offset="0.3" stopColor="#181412" stopOpacity={0} />
+            <stop offset="1" stopColor="#181412" stopOpacity={0.16} />
           </linearGradient>
           <linearGradient id="cs-tank" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stopColor="#9DB1CA" />
@@ -954,16 +957,16 @@ export const ConjuntoScene = forwardRef<HTMLDivElement, SceneProps>(function Con
             <stop offset="1" stopColor="#8FA4C0" />
           </linearGradient>
           <radialGradient id="cs-glow">
-            <stop offset="0" stopColor={EMERALD} stopOpacity={0.5} />
-            <stop offset="1" stopColor={EMERALD} stopOpacity={0} />
+            <stop offset="0" stopColor={ACCENT} stopOpacity={0.45} />
+            <stop offset="1" stopColor={ACCENT} stopOpacity={0} />
           </radialGradient>
           <radialGradient id="cs-lamp">
             <stop offset="0" stopColor="#FFD890" stopOpacity={0.65} />
             <stop offset="1" stopColor="#FFD890" stopOpacity={0} />
           </radialGradient>
           <radialGradient id="cs-floor">
-            <stop offset="0.55" stopColor="#0D223F" stopOpacity={0.2} />
-            <stop offset="1" stopColor="#0D223F" stopOpacity={0} />
+            <stop offset="0.55" stopColor="#181412" stopOpacity={0.2} />
+            <stop offset="1" stopColor="#181412" stopOpacity={0} />
           </radialGradient>
           <clipPath id="cs-lot">
             <polygon points={flat(0, LOT, 0, LOT, 0)} />
@@ -984,7 +987,7 @@ export const ConjuntoScene = forwardRef<HTMLDivElement, SceneProps>(function Con
         <Objects mode={mode} />
 
         {/* Outline of the lit zone */}
-        <g fill="none" stroke={EMERALD} strokeWidth={1.8} strokeLinejoin="round">
+        <g fill="none" stroke={ACCENT} strokeWidth={1.8} strokeLinejoin="round">
           {shape?.outline?.map((b, i) => <polygon key={i} points={silhouette(b)} />)}
           {highlight === "tanques" && (
             <ellipse cx={P(2.3, 2.3, T1_TOP)[0]} cy={P(2.3, 2.3, T1_TOP)[1]} {...isoR(1.1)} />
@@ -1003,7 +1006,7 @@ export const ConjuntoScene = forwardRef<HTMLDivElement, SceneProps>(function Con
               y1={sy}
               x2={cx}
               y2={cy}
-              stroke={lit ? EMERALD : "rgb(var(--c-ink) / 0.4)"}
+              stroke={lit ? ACCENT : "rgb(var(--c-ink) / 0.4)"}
               strokeWidth={lit ? 1.6 : 1.1}
             />
           );
@@ -1028,7 +1031,7 @@ export const ConjuntoScene = forwardRef<HTMLDivElement, SceneProps>(function Con
                 MARKER[state],
               )}
             >
-              {active && <span className="marker-pulse absolute -inset-[2px] rounded-full bg-emerald" />}
+              {active && <span className="marker-pulse absolute -inset-[2px] rounded-full bg-accent" />}
             </span>
             <button
               type="button"
@@ -1041,21 +1044,21 @@ export const ConjuntoScene = forwardRef<HTMLDivElement, SceneProps>(function Con
               aria-current={active ? "step" : undefined}
               style={toPercent(ANCHOR[c.zone].chip)}
               className={cn(
-                "callout absolute z-20 flex items-center gap-2 rounded-xl border bg-surface/95 py-1.5 pl-1.5 pr-3 text-left shadow-[0_10px_24px_-14px_rgb(13_34_63/0.6)] transition-[border-color,box-shadow] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cobalt",
-                lit ? "border-emerald shadow-[0_0_0_1px_rgb(var(--c-emerald)),0_10px_24px_-14px_rgb(13_34_63/0.6)]" : "border-line hover:border-[rgb(var(--c-ink)/0.3)]",
+                "callout absolute z-20 flex items-center gap-2 rounded-xl border bg-surface/95 py-1.5 pl-1.5 pr-3 text-left shadow-[0_10px_24px_-14px_rgb(24_20_18/0.55)] transition-[border-color,box-shadow] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-ink",
+                lit ? "border-accent shadow-[0_0_0_1px_rgb(var(--c-accent)),0_10px_24px_-14px_rgb(24_20_18/0.55)]" : "border-line hover:border-[rgb(var(--c-ink)/0.3)]",
               )}
             >
               <span
                 className={cn(
                   "grid h-7 w-7 shrink-0 place-items-center rounded-lg transition-colors duration-300",
-                  lit ? "bg-emerald text-navy-deep" : "bg-surface-2 text-ink",
+                  lit ? "bg-accent text-espresso-deep" : "bg-surface-2 text-ink",
                 )}
               >
                 <Icon aria-hidden className="h-3.5 w-3.5" />
               </span>
               <span className="callout-text min-w-0">
                 <span className="block whitespace-nowrap text-[11px] leading-tight text-muted">{c.label}</span>
-                <span key={value} className="animate-enter mt-0.5 flex items-center gap-1.5 whitespace-nowrap text-[13px] font-bold leading-tight text-ink tabular">
+                <span key={value} className="animate-swap mt-0.5 flex items-center gap-1.5 whitespace-nowrap text-[13px] font-bold leading-tight text-ink tabular">
                   <span aria-hidden className={cn("h-1.5 w-1.5 shrink-0 rounded-full", MARKER[state])} />
                   {value}
                 </span>

@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { PazYSalvoSeal } from "@/components/brand/seal";
 import { QrCode } from "@/components/modules/qr-code";
 import type { VignetteKind } from "@/lib/data/modules";
 import { cn } from "@/lib/utils";
@@ -11,9 +11,7 @@ function PazYSalvo() {
   return (
     <div>
       <div className="flex items-start gap-3">
-        <span className="grid h-11 w-11 shrink-0 -rotate-12 place-items-center rounded-full border-2 border-emerald text-emerald-ink">
-          <Check aria-hidden className="h-5 w-5" />
-        </span>
+        <PazYSalvoSeal conjunto="Altos del Bosque" className="h-[4.5rem] w-[4.5rem] shrink-0 -rotate-12 drop-shadow-[0_4px_8px_rgb(24_20_18/0.2)]" />
         <div className="min-w-0">
           <p className="text-sm font-bold text-ink">Certificado de paz y salvo</p>
           <p className="mt-0.5 text-xs leading-relaxed text-body">
@@ -75,7 +73,7 @@ function Reservas() {
               "flex flex-col items-center rounded-lg py-1.5 text-[10px] tabular",
               day.s === "libre" && "bg-white/70 text-body ring-1 ring-[rgb(var(--c-emerald)/0.45)] dark:bg-white/5",
               day.s === "ocupado" && "text-muted line-through",
-              day.s === "tuyo" && "bg-emerald text-navy-deep",
+              day.s === "tuyo" && "bg-accent text-espresso-deep",
             )}
           >
             <span>{day.d}</span>
@@ -92,8 +90,8 @@ function Reservas() {
 
 function Votacion() {
   const options = [
-    { label: "Sí", value: 61.4, className: "bg-emerald" },
-    { label: "No", value: 27.9, className: "bg-[rgb(var(--c-cobalt)/0.55)]" },
+    { label: "Sí", value: 61.4, className: "bg-accent" },
+    { label: "No", value: 27.9, className: "bg-chart-muted" },
     { label: "Abstención", value: 10.7, className: "bg-[rgb(var(--c-muted)/0.45)]" },
   ];
   return (
@@ -130,7 +128,7 @@ function Mantenimiento() {
       <ul className="mt-2 divide-y divide-[rgb(var(--c-ink)/0.08)]">
         {plan.map((p) => (
           <li key={p.title} className="flex items-center gap-3 py-2 text-xs">
-            <span className="w-12 shrink-0 font-semibold text-cobalt tabular">{p.date}</span>
+            <span className="w-12 shrink-0 font-semibold text-accent-ink tabular">{p.date}</span>
             <span className="min-w-0 flex-1 truncate text-ink">{p.title}</span>
             <span className={cn("shrink-0 text-[11px]", p.done ? "font-semibold text-emerald-ink" : "text-muted")}>
               {p.done ? "Confirmado" : "Por confirmar"}

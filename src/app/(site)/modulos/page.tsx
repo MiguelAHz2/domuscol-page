@@ -26,7 +26,7 @@ export default function ModulosPage() {
       >
         <ul className="flex flex-wrap gap-2">
           <li className="rounded-full border border-[rgb(var(--c-ink)/0.15)] bg-surface/60 px-3.5 py-1.5 text-sm font-medium text-ink dark:border-white/20 dark:bg-transparent dark:text-white">
-            <span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-emerald" aria-hidden />
+            <span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-accent" aria-hidden />
             {featureCount("fase-1")} funciones en Fase 1
           </li>
           <li className="rounded-full border border-[rgb(var(--c-ink)/0.15)] bg-surface/60 px-3.5 py-1.5 text-sm font-medium text-body dark:border-white/20 dark:bg-transparent dark:text-white/80">

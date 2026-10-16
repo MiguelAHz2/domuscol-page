@@ -46,7 +46,7 @@ export function Metrics() {
   }, [inView, mode]);
 
   return (
-    <section aria-label="Lo que busca DomusCol" className="border-b border-line bg-surface">
+    <section aria-label="Lo que busca DomusCol" className="border-b border-line bg-section">
       <dl
         ref={ref}
         className="mx-auto grid max-w-page divide-y divide-line px-4 sm:px-6 md:grid-cols-3 md:divide-x md:divide-y-0 lg:px-8"

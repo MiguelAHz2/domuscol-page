@@ -64,7 +64,7 @@ export function SavingsCalculator({ units }: { units: number }) {
               <span className="pb-1.5 text-lg font-semibold text-muted">horas al mes</span>
             </p>
             <p className="mt-3 flex items-center gap-2 text-sm text-body">
-              <Clock aria-hidden className="h-4 w-4 text-emerald-ink" />
+              <Clock aria-hidden className="h-4 w-4 text-accent-ink" />
               Cerca de {formatNumber(total / 8, 1)} días de trabajo que puede dedicar al consejo y a los residentes.
             </p>
           </div>
@@ -79,7 +79,7 @@ export function SavingsCalculator({ units }: { units: number }) {
                   </div>
                   <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-[rgb(var(--c-ink)/0.08)]">
                     <div
-                      className="h-full rounded-full bg-emerald transition-[width] duration-500"
+                      className="h-full rounded-full bg-accent transition-[width] duration-500"
                       style={{ width: `${(r.hours / max) * 100}%` }}
                     />
                   </div>
@@ -92,7 +92,7 @@ export function SavingsCalculator({ units }: { units: number }) {
               onClick={() => setShowAssumptions((v) => !v)}
               aria-expanded={showAssumptions}
               aria-controls="supuestos"
-              className="mt-6 flex items-center gap-1.5 text-sm font-semibold text-cobalt"
+              className="mt-6 flex items-center gap-1.5 text-sm font-semibold text-accent-ink"
             >
               Ver los supuestos del cálculo
               <ChevronDown aria-hidden className={cn("h-4 w-4 transition-transform", showAssumptions && "rotate-180")} />

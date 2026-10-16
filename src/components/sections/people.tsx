@@ -3,7 +3,7 @@ import Link from "next/link";
 import acceso from "@/assets/images/acceso-conjunto.jpg";
 import administracion from "@/assets/images/administracion.jpg";
 import residente from "@/assets/images/residente-celular.jpg";
-import { Isotipo } from "@/components/brand/logo";
+import { AppIcon } from "@/components/brand/logo";
 
 interface Story {
   photo: StaticImageData;
@@ -45,7 +45,7 @@ const STORIES: Story[] = [
 // glass sits over photography, where it has something to refract.
 export function People() {
   return (
-    <section aria-labelledby="personas-titulo" className="bg-surface py-20 sm:py-28">
+    <section aria-labelledby="personas-titulo" className="bg-section py-20 sm:py-28">
       <div className="mx-auto max-w-page px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
@@ -58,7 +58,7 @@ export function People() {
           </div>
           <Link
             href="/beneficios"
-            className="shrink-0 font-semibold text-ink underline decoration-line decoration-2 underline-offset-[6px] transition-colors hover:decoration-emerald"
+            className="shrink-0 font-semibold text-ink underline decoration-line decoration-2 underline-offset-[6px] transition-colors hover:decoration-accent"
           >
             Ver beneficios por perfil
           </Link>
@@ -68,7 +68,7 @@ export function People() {
         <div className="-mx-4 mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:-mx-6 sm:px-6 md:mx-0 md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:px-0 md:pb-0 lg:gap-6">
           {STORIES.map((s) => (
             <figure key={s.role} className="w-[82%] shrink-0 snap-center md:w-auto">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-[20px] bg-navy">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[20px] bg-espresso">
                 <Image
                   src={s.photo}
                   alt={s.alt}
@@ -78,11 +78,9 @@ export function People() {
                   className="object-cover"
                   style={{ objectPosition: s.position }}
                 />
-                <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[rgb(7_21_39/0.55)] to-transparent" />
+                <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[rgb(16_13_11/0.55)] to-transparent" />
                 <div className="glass glass-strong absolute inset-x-3 bottom-3 flex items-start gap-3 rounded-2xl p-3 sm:inset-x-4 sm:bottom-4">
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-navy">
-                    <Isotipo className="h-7 w-7 text-white" />
-                  </span>
+                  <AppIcon className="h-9 w-9" />
                   <div className="min-w-0 flex-1">
                     <p className="flex items-baseline justify-between gap-2 text-[11px] text-muted">
                       DomusCol <span>ahora</span>

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.jpg" alt="Sitio de DomusCol en escritorio y en celular" width="100%" />
+  <img src="docs/banner.jpg" alt="DomusCol, Soluciones Integradas: plataforma para la propiedad horizontal" width="100%" />
 </p>
 
 <h1 align="center">DomusCol</h1>
@@ -30,7 +30,7 @@
 ## ✨ Qué hay adentro
 
 - **Una demo que se toca en el hero.** La fachada del conjunto es la cartera: cada ventana es una unidad. El visitante paga la cuota desde el celular de ejemplo y ve encenderse su ventana en el panel del administrador.
-- **Bogotá de noche, generada en código.** Los cerros orientales, la luz de Monserrate y torres cuyas ventanas se encienden en esmeralda al pasar el cursor. Cada capa se pinta una vez y el paralaje lo mueve la GPU.
+- **Bogotá de noche, generada en código.** Los cerros orientales, la luz de Monserrate y torres cuyas ventanas se encienden en terracota y cobre al pasar el cursor. Cada capa se pinta una vez y el paralaje lo mueve la GPU.
 - **Un día en el conjunto.** Una maqueta isométrica de Altos del Bosque (torres de ladrillo con balcones, piscina, BBQ, parqueadero y portería) que va de las 6 a. m. a las 10 p. m.; etiquetas flotantes muestran el recaudo, las PQR, las reservas y los visitantes de cada hora.
 - **Lugares reales, pantallas reales.** Fotos de la vida en conjunto con la pantalla de DomusCol encima en *liquid glass*: paz y salvo, pase QR, reservas, votaciones y mantenimientos.
 - **Precios y ahorro.** Simulador por número de unidades y calculadora de horas ahorradas, con los supuestos a la vista.
@@ -74,7 +74,7 @@
 | Errores | [Sentry](https://sentry.io), cargado solo si hay DSN |
 | Hosting | [Vercel](https://vercel.com) |
 
-El producto (API NestJS y panel `web-admin`) vive en el repositorio `domuscol-app`; esta landing comparte su marca: Azul Domus `#0D223F`, esmeralda `#10B981` y Plus Jakarta Sans.
+El producto (API NestJS y panel `web-admin`) vive en el repositorio `domuscol-app`; esta landing usa la paleta de la marca: Espresso Carbón `#181412`, Terracota `#E06D44` y Piedra Caliza `#F6F2EE`, con Plus Jakarta Sans.
 
 ## 🚀 Empezar
 
@@ -259,6 +259,7 @@ function doPost(e) {
 ## 📈 Analítica y errores
 
 - **Vercel Web Analytics y Speed Insights** ya están en el layout. Actívalos en el proyecto de Vercel (pestañas *Analytics* y *Speed Insights*); no usan cookies, así que no hace falta banner de consentimiento.
+- **Eventos de conversión** ([`src/lib/events.ts`](src/lib/events.ts)): *Solicitud de demo* (con ciudad y rango de unidades), *WhatsApp* (botón flotante o tras la solicitud) y *Recorrido del día*. No envían datos personales. Los eventos personalizados se ven en planes Pro de Vercel; en Hobby simplemente no se registran.
 - **Sentry** se descarga solo si defines `NEXT_PUBLIC_SENTRY_DSN`, y cuando la página ya está quieta, así que no afecta la carga. En el servidor se activa con `SENTRY_DSN`. No envía datos del formulario ni de la persona. Con `SENTRY_AUTH_TOKEN` el build sube los source maps y los errores se leen con el código original.
 
 ## ✅ Antes de lanzar
@@ -302,6 +303,7 @@ src/
 ├─ assets/images/             Fotografías (ver créditos)
 ├─ components/
 │  ├─ hero/                   Fachada, panel, celular y skyline
+│  ├─ brand/                  Logo, isotipo, insignias, sello y animaciones de marca
 │  ├─ day/                    Maqueta isométrica del conjunto
 │  ├─ monitoring/             Analítica de Vercel y carga diferida de Sentry
 │  ├─ sections/               Secciones de cada página
@@ -314,7 +316,14 @@ src/
 │  ├─ monitoring.ts           Sentry en el navegador
 │  └─ site.ts                 Datos del sitio, redes y responsable de los datos
 └─ instrumentation.ts         Sentry en el servidor
+public/
+├─ icon.svg                   Favicon (kit de marca)
+├─ icons/                     Íconos PNG para instalar el sitio como app
+├─ brand/logo-correo.png      Logo para el encabezado de los correos
+└─ lottie/                    Animaciones del isotipo que usa el sitio (generadas)
+design/marca/                 Kit de marca original (fuente, no se publica)
 scripts/
+├─ generar-lotties.mjs        Reconstruye los Lottie del kit de marca
 └─ probar-formulario.mjs      Prueba de punta a punta con testmail.app
 ```
 
@@ -324,15 +333,40 @@ scripts/
 
 | Token | Color | Uso |
 | --- | --- | --- |
-| Azul Domus | `#0D223F` | Color dominante: hero, navbar, franjas y texto |
-| Esmeralda | `#10B981` | Solo para "al día", aprobado y acciones principales |
-| Cobalto | `#2458E6` | Enlaces, foco y estados "próximamente" |
-| Niebla | `#F3F6FA` | Fondo de las secciones claras |
+| Espresso Carbón | `#181412` | Estructura: titulares, modo oscuro, superficies oscuras y logo |
+| Terracota Arquitectónico | `#E06D44` | Identidad y acciones: botones principales, sufijo "Col", elementos activos |
+| Terracota para texto | `#9A3D1C` | Enlaces y etiquetas en terracota sobre fondo claro (en oscuro se usa Cobre) |
+| Cobre Suave | `#F4A27E` | Hover, íconos activos y bordes sobre oscuro |
+| Piedra Caliza | `#F6F2EE` | Superficie cálida. En modo claro el fondo va más hondo (`#EAE3DA`, secciones alternas `#E2D9CF`) para que tarjetas, bordes y vidrio se distingan |
+| Piedra cálida | `#786E68` | Subtítulos, metadatos y etiquetas (en texto pequeño, más honda: `#615751`, para cumplir AA) |
+| Blanco Puro | `#FFFFFF` | Tarjetas y paneles, en su versión cálida `#FBF9F6` |
+| Estados | `#10B981` `#F59E0B` `#EF4444` `#38BDF8` | Al día, pendiente, en mora y aviso: los colores semánticos del manual |
+
+Los colores viven como variables en [`src/app/globals.css`](src/app/globals.css), con su versión para modo oscuro, y Tailwind los expone como `bg-accent`, `text-accent-ink`, `bg-espresso`, etc.
 
 - **Una sola familia tipográfica:** Plus Jakarta Sans, en una escala clásica (12, 14, 16, 18, 21, 24, 36, 48, 60).
 - **El vidrio va sobre algo real.** El *liquid glass* se usa solo sobre fotos, el skyline o contenido que pasa por debajo (navbar, notificaciones, formulario). Las secciones planas usan superficies sólidas y líneas finas.
 - **El contenido está separado del diseño:** textos, módulos, precios y preguntas viven en `src/lib/data`, y los datos de contacto en `src/lib/site.ts`.
 - **Accesible:** navegación completa con teclado, foco visible, etiquetas ARIA en pestañas, acordeones y filtros, y movimiento reducido cuando el sistema lo pide.
+
+## 🏢 Identidad de marca
+
+El kit oficial ("Torres Horizontales") vive en [`design/marca`](design/marca), con su propio índice. Es la fuente: no se publica. Lo que usa el sitio:
+
+| Pieza del kit | Dónde aparece |
+| --- | --- |
+| Logo e isotipo (01, 02, 07, 08, 38–41) | Barra superior, pie de página (con el lema) y celular de ejemplo, dibujados en [`src/components/brand`](src/components/brand) para que cambien con el tema |
+| Ícono de app y favicon (09, 12) | Favicon, ícono para iPhone, íconos para instalar el sitio como app (`public/icons`) y avatar de las notificaciones |
+| Insignias por rol (16–19) | Pestañas de Beneficios |
+| Sello de paz y salvo (23) | Módulo de administración y finanzas, con el nombre del conjunto de la demo |
+| Banner para redes (24) | Imagen al compartir el enlace (`src/app/opengraph-image.tsx`), con el dominio real |
+| Patrón arquitectónico (25) | Fondo de los encabezados sin foto (Precios, Preguntas frecuentes, 404) |
+| Lottie (27–32) | El logo se arma en el cierre de cada página (y se repite mientras está en pantalla), se dibuja en la 404 y late mientras se envía el formulario |
+| Logo horizontal (01) | Encabezado de los correos, como PNG (`public/brand/logo-correo.png`): los clientes de correo no muestran SVG |
+
+Los Lottie del kit traen solo los tiempos de cada capa, sin las formas, así que no se veían. `node scripts/generar-lotties.mjs` los reconstruye con la geometría del isotipo: los seis corregidos quedan en `design/marca/lottie` y los tres que usa el sitio en [`public/lottie`](public/lottie). El reproductor ligero de `lottie-web` se descarga solo cuando una animación está por verse, y con movimiento reducido se muestra el logo terminado.
+
+No se usan en el sitio, por ser piezas impresas o de producto: membrete, firma de correo, carnet, tarjeta, recibo, sticker y QR. Están en `design/marca/documentos`, fuera de git, porque traen nombres, cédula y datos de contacto de ejemplo y este repositorio es público.
 
 ## 📷 Créditos de fotos
 

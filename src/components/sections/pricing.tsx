@@ -56,7 +56,7 @@ export function Pricing() {
                 <ul className="mt-3 space-y-2 text-sm">
                   {INCLUDED.map((item) => (
                     <li key={item} className="flex gap-2.5">
-                      <Check aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-emerald-ink" />
+                      <Check aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-accent-ink" />
                       {item}
                     </li>
                   ))}
@@ -91,7 +91,7 @@ function PlanCard({ plan, units, featured }: { plan: Plan; units: number; featur
       className={cn(
         "flex flex-col rounded-[20px] p-6 sm:p-7",
         featured
-          ? "on-navy bg-navy text-white/75 dark:bg-navy-raised dark:ring-1 dark:ring-[rgb(var(--c-emerald)/0.35)]"
+          ? "on-espresso bg-espresso text-white/75 dark:bg-espresso-raised dark:ring-1 dark:ring-[rgb(var(--c-accent)/0.45)]"
           : "border border-line bg-surface",
       )}
     >
@@ -108,7 +108,7 @@ function PlanCard({ plan, units, featured }: { plan: Plan; units: number; featur
       <ul className="mt-7 space-y-2.5 text-sm">
         {plan.includes.map((item) => (
           <li key={item} className="flex gap-2.5">
-            <Check aria-hidden className={cn("mt-0.5 h-4 w-4 shrink-0", featured ? "text-emerald" : "text-emerald-ink")} />
+            <Check aria-hidden className={cn("mt-0.5 h-4 w-4 shrink-0", featured ? "text-copper" : "text-accent-ink")} />
             <span className={featured ? "text-white/85" : "text-body"}>{item}</span>
           </li>
         ))}

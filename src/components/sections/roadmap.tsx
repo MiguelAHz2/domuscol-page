@@ -27,7 +27,7 @@ export function Roadmap() {
                   aria-hidden
                   className={cn(
                     "relative z-10 grid h-11 w-11 place-items-center rounded-full border-4 border-bg text-sm font-bold",
-                    current ? "bg-emerald text-navy-deep" : "bg-surface text-muted ring-1 ring-line",
+                    current ? "bg-accent text-espresso-deep" : "bg-surface text-muted ring-1 ring-line",
                   )}
                 >
                   {i + 1}
@@ -39,8 +39,8 @@ export function Roadmap() {
                       className={cn(
                         "rounded-full px-2.5 py-0.5 text-xs font-semibold",
                         current
-                          ? "bg-[rgb(var(--c-emerald)/0.16)] text-emerald-ink"
-                          : "border border-[rgb(var(--c-cobalt)/0.35)] text-cobalt",
+                          ? "bg-[rgb(var(--c-accent)/0.1)] text-accent-ink"
+                          : "border border-[rgb(var(--c-muted)/0.45)] text-muted",
                       )}
                     >
                       {phase.status}
@@ -53,7 +53,7 @@ export function Roadmap() {
                       <li key={item} className="flex gap-2.5">
                         <Check
                           aria-hidden
-                          className={cn("mt-0.5 h-4 w-4 shrink-0", current ? "text-emerald-ink" : "text-[rgb(var(--c-muted)/0.7)]")}
+                          className={cn("mt-0.5 h-4 w-4 shrink-0", current ? "text-accent-ink" : "text-[rgb(var(--c-muted)/0.7)]")}
                         />
                         <span className="text-body">{item}</span>
                       </li>

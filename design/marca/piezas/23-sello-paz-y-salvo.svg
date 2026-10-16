@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="440" viewBox="0 0 440 440" role="img" aria-label="Sello Oficial de Administración DomusCol">
+  <defs>
+    <!-- Top curved path for upper ring text (radius 148, center 220,220) -->
+    <path id="stampTopArc" d="M 72,220 A 148,148 0 1,1 368,220" />
+    <!-- Bottom curved path for lower ring text (radius 154, center 220,220) -->
+    <path id="stampBottomArc" d="M 374,220 A 154,154 0 1,1 66,220" />
+  </defs>
+
+  <!-- Outer Seal Rings -->
+  <circle cx="220" cy="220" r="196" fill="#FAF8F5" stroke="#181412" stroke-width="6"/>
+  <circle cx="220" cy="220" r="182" fill="none" stroke="#E06D44" stroke-width="2" stroke-dasharray="6 4"/>
+  <circle cx="220" cy="220" r="120" fill="#FFFFFF" stroke="#181412" stroke-width="2.5"/>
+
+  <!-- Curved Ring Texts (Zero Overlap!) -->
+  <text font-family="Manrope, sans-serif" font-size="13.5" font-weight="800" letter-spacing="3.8" fill="#181412">
+    <textPath href="#stampTopArc" startOffset="50%" text-anchor="middle">
+      ★ CAMPOS FLORELLI · PROPIEDAD HORIZONTAL ★
+    </textPath>
+  </text>
+  <text font-family="Manrope, sans-serif" font-size="12.5" font-weight="800" letter-spacing="3.5" fill="#E06D44">
+    <textPath href="#stampBottomArc" startOffset="50%" text-anchor="middle">
+      SOLUCIONES INTEGRADAS · VERIFICADO
+    </textPath>
+  </text>
+
+  <!-- Center Emblem inside r=120 (y from 100 to 340) -->
+  <g transform="translate(172, 118) scale(0.6)">
+    
+    <g id="layer-core-c">
+      <polygon fill="#E06D44" points="28,31 76,5 76,13 28,39"/>
+    </g>
+    <g id="layer-structure-d">
+      <path fill="#181412" fill-rule="evenodd" d="M28 43 L76 17 V130 H28 V43 Z M44 50 V66 H60 V50 H44 Z M44 76 V92 H60 V76 H44 Z M44 102 V118 H60 V102 H44 Z"/>
+    </g>
+    <g id="layer-roof">
+      <path fill="#E06D44" fill-rule="evenodd" d="M86 45 L132 70 V130 H86 V45 Z M102 74 V90 H116 V74 H102 Z M102 98 V114 H116 V98 H102 Z"/>
+    </g>
+    <g id="layer-keystone">
+      <path fill="#181412" d="M22 138 H138 A4 4 0 0 1 142 142 A4 4 0 0 1 138 146 H22 A4 4 0 0 1 18 142 A4 4 0 0 1 22 138 Z"/>
+    </g>
+  
+  </g>
+  <text x="220" y="232" text-anchor="middle" font-family="Manrope, sans-serif" font-size="22" font-weight="800" letter-spacing="-0.5" fill="#181412">Domus<tspan fill="#E06D44">Col</tspan></text>
+
+  <!-- Official Ribbon Badge -->
+  <rect x="116" y="248" width="208" height="32" rx="8" fill="#E06D44"/>
+  <text x="220" y="269" text-anchor="middle" font-family="Manrope, sans-serif" font-size="12" font-weight="800" letter-spacing="2.8" fill="#FFFFFF">PAZ Y SALVO OFICIAL</text>
+  <text x="220" y="302" text-anchor="middle" font-family="Manrope, sans-serif" font-size="9.5" font-weight="700" letter-spacing="1.5" fill="#786E68">ADMINISTRACIÓN AL DÍA</text>
+</svg>

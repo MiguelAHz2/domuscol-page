@@ -1,9 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { RoleBadge, type Role } from "@/components/brand/role-badge";
 import { ProfilePreview } from "@/components/profiles/previews";
 import { PROFILES, type ProfileId } from "@/lib/data/profiles";
 import { cn } from "@/lib/utils";
+
+// Each profile carries the role badges from the brand kit.
+const BADGES: Record<ProfileId, Role[]> = {
+  administradores: ["administrador"],
+  residentes: ["residente"],
+  consejo: ["consejo", "seguridad"],
+};
 
 export function Profiles() {
   const [active, setActive] = useState<ProfileId>(PROFILES[0].id);
@@ -40,7 +48,7 @@ export function Profiles() {
   const profile = PROFILES.find((p) => p.id === active)!;
 
   return (
-    <section id="beneficios" aria-label="Beneficios por perfil" className="bg-surface py-16 sm:py-24">
+    <section id="beneficios" aria-label="Beneficios por perfil" className="bg-section py-16 sm:py-24">
       <div className="mx-auto max-w-page px-4 sm:px-6 lg:px-8">
         <div
           role="tablist"
@@ -51,7 +59,7 @@ export function Profiles() {
           {indicator && (
             <span
               aria-hidden
-              className="absolute rounded-xl bg-navy transition-all duration-300 ease-out dark:bg-white/15"
+              className="absolute rounded-xl bg-espresso transition-all duration-300 ease-out dark:bg-white/15"
               style={indicator}
             />
           )}
@@ -74,7 +82,7 @@ export function Profiles() {
                   "relative z-10 min-h-11 rounded-xl px-2 py-2 text-[13px] font-semibold leading-tight transition-colors duration-200 sm:px-5 sm:text-sm",
                   selected ? "text-white" : "text-muted hover:text-ink",
                   // Before the indicator is measured, the tab carries its own fill.
-                  selected && !indicator && "bg-navy dark:bg-white/15",
+                  selected && !indicator && "bg-espresso dark:bg-white/15",
                 )}
               >
                 {p.tab}
@@ -92,6 +100,11 @@ export function Profiles() {
           className="animate-enter mt-12 grid items-center gap-12 rounded-lg lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16"
         >
           <div>
+            <div className="mb-7 flex flex-wrap gap-3">
+              {BADGES[profile.id].map((role) => (
+                <RoleBadge key={role} role={role} className="w-[17.5rem] max-w-full drop-shadow-[0_10px_18px_rgb(24_20_18/0.18)]" />
+              ))}
+            </div>
             <h3 className="text-2xl font-bold sm:text-[1.75rem] sm:leading-tight">{profile.headline}</h3>
             <dl className="mt-8 border-t border-line">
               {profile.benefits.map(({ title, text }) => (

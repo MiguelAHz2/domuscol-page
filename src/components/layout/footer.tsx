@@ -61,11 +61,11 @@ function ColombiaFlag() {
 
 export function Footer() {
   return (
-    <footer className="border-t border-line bg-surface-2 text-muted dark:border-transparent dark:bg-navy-deep dark:text-white/65">
+    <footer className="border-t border-line bg-surface-2 text-muted dark:border-transparent dark:bg-espresso-deep dark:text-white/65">
       <div className="mx-auto max-w-page px-4 pb-10 pt-16 sm:px-6 lg:px-8">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[minmax(0,1.3fr)_repeat(3,minmax(0,1fr))] lg:gap-10">
           <div>
-            <Logo />
+            <Logo tagline />
             <p className="mt-4 max-w-xs text-sm">{site.tagline}</p>
             <p className="mt-5 inline-flex items-center gap-2 rounded-full border border-line py-1 pl-3 pr-2.5 text-sm font-medium text-ink dark:border-white/15 dark:text-white">
               Hecho en Colombia <ColombiaFlag />

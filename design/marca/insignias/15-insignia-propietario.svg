@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="156" viewBox="0 0 480 156" role="img" aria-label="Insignia PROPIETARIO">
+  <rect x="2" y="2" width="476" height="152" rx="20" fill="#181412" stroke="#E06D44" stroke-width="1.8" stroke-opacity="0.65"/>
+  <g transform="translate(24, 42)">
+    <rect width="72" height="72" rx="16" fill="#241E1B" stroke="#E06D44" stroke-width="1.5" stroke-opacity="0.5"/>
+    <path d="M21 37 36 24l15 13v13H21V37Z" stroke="#E06D44" stroke-width="2.8" stroke-linejoin="round" fill="none"/>
+              <circle cx="36" cy="41" r="3.5" fill="#FFFFFF"/>
+  </g>
+  <g font-family="Manrope, Inter, sans-serif">
+    <text x="114" y="54" font-size="10.5" font-weight="800" letter-spacing="3.2" fill="#E06D44">DOMUSCOL · PR · 02</text>
+    <text x="114" y="88" font-size="22" font-weight="800" letter-spacing="-0.4" fill="#FFFFFF">PROPIETARIO</text>
+    <text x="114" y="114" font-size="9.5" font-weight="700" letter-spacing="1.4" fill="#C4B8B1">GESTIÓN PATRIMONIAL, CUOTAS Y VOTOS</text>
+  </g>
+  <g transform="translate(406, 22) scale(0.3)">
+    
+    <g id="layer-core-c">
+      <polygon fill="#E06D44" points="28,31 76,5 76,13 28,39"/>
+    </g>
+    <g id="layer-structure-d">
+      <path fill="#FFFFFF" fill-rule="evenodd" d="M28 43 L76 17 V130 H28 V43 Z M44 50 V66 H60 V50 H44 Z M44 76 V92 H60 V76 H44 Z M44 102 V118 H60 V102 H44 Z"/>
+    </g>
+    <g id="layer-roof">
+      <path fill="#E06D44" fill-rule="evenodd" d="M86 45 L132 70 V130 H86 V45 Z M102 74 V90 H116 V74 H102 Z M102 98 V114 H116 V98 H102 Z"/>
+    </g>
+    <g id="layer-keystone">
+      <path fill="#FFFFFF" d="M22 138 H138 A4 4 0 0 1 142 142 A4 4 0 0 1 138 146 H22 A4 4 0 0 1 18 142 A4 4 0 0 1 22 138 Z"/>
+    </g>
+  
+  </g>
+</svg>

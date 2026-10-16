@@ -2,17 +2,21 @@ import Link from "next/link";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 import { PageHero } from "@/components/layout/page-hero";
+import { SkipLink } from "@/components/layout/skip-link";
+import { BrandLottie } from "@/components/brand/brand-lottie";
 import { buttonClass } from "@/components/ui/button";
 import { navLinks } from "@/lib/site";
 
 export default function NotFound() {
   return (
     <>
+      <SkipLink />
       <Navbar />
-      <main>
+      <main id="contenido" tabIndex={-1} className="focus:outline-none">
         <PageHero
           title="Esta página no existe"
           lead="Puede que el enlace esté mal escrito o que la página se haya movido. Estas son las secciones de DomusCol:"
+          mark={<BrandLottie preset="stroke-draw" playOnView={false} className="-ml-2 mb-6 h-24 w-24" />}
         >
           <div className="flex flex-wrap gap-2">
             {navLinks.map((l) => (

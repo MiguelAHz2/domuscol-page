@@ -1,1 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0D223F"/><g fill="#fff"><rect x="7" y="6" width="3.5" height="3.5" rx=".8"/><rect x="11.5" y="6" width="3.5" height="3.5" rx=".8"/><rect x="7" y="10.5" width="3.5" height="3.5" rx=".8"/><rect x="7" y="15" width="3.5" height="3.5" rx=".8"/><rect x="11.5" y="15" width="3.5" height="3.5" rx=".8"/><rect x="7" y="19.5" width="3.5" height="3.5" rx=".8"/><rect x="11.5" y="19.5" width="3.5" height="3.5" rx=".8"/><rect x="17" y="15" width="3.5" height="3.5" rx=".8"/><rect x="21.5" y="15" width="3.5" height="3.5" rx=".8"/><rect x="17" y="19.5" width="3.5" height="3.5" rx=".8"/><rect x="21.5" y="19.5" width="3.5" height="3.5" rx=".8"/></g><rect x="11.5" y="10.5" width="3.5" height="3.5" rx=".8" fill="#10B981"/><rect x="6" y="24.5" width="20" height="1.5" rx=".75" fill="#fff" opacity=".5"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 160 160" role="img" aria-label="DomusCol Icon">
+  <rect width="160" height="160" rx="36" fill="#181412"/><rect x="3" y="3" width="154" height="154" rx="33" fill="none" stroke="#E06D44" stroke-opacity="0.28" stroke-width="1.5"/>
+  <g transform="translate(8, 8) scale(0.9)">
+    
+    <g id="layer-core-c">
+      <polygon fill="#E06D44" points="28,31 76,5 76,13 28,39"/>
+    </g>
+    <g id="layer-structure-d">
+      <path fill="#FFFFFF" fill-rule="evenodd" d="M28 43 L76 17 V130 H28 V43 Z M44 50 V66 H60 V50 H44 Z M44 76 V92 H60 V76 H44 Z M44 102 V118 H60 V102 H44 Z"/>
+    </g>
+    <g id="layer-roof">
+      <path fill="#E06D44" fill-rule="evenodd" d="M86 45 L132 70 V130 H86 V45 Z M102 74 V90 H116 V74 H102 Z M102 98 V114 H116 V98 H102 Z"/>
+    </g>
+    <g id="layer-keystone">
+      <path fill="#FFFFFF" d="M22 138 H138 A4 4 0 0 1 142 142 A4 4 0 0 1 138 146 H22 A4 4 0 0 1 18 142 A4 4 0 0 1 22 138 Z"/>
+    </g>
+  
+  </g>
+</svg>

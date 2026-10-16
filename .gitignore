@@ -9,3 +9,7 @@ next-env.d.ts
 # Local environment and Vercel
 .env
 .vercel
+
+# Brand kit samples with example names, IDs and contact data: keep them
+# local, this repository is public.
+design/marca/documentos/

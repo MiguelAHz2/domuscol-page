@@ -6,8 +6,8 @@ import { cn, mulberry32 } from "@/lib/utils";
 // Generative skyline behind the home hero: Bogotá's cerros orientales and
 // two layers of residential towers. By night (dark theme) Monserrate is lit
 // and scrolling takes the sky from dusk to night; by day (light theme) the
-// city is pale and hazy. The cursor lights nearby windows emerald — the
-// same "al día" signal as the facade — leaving a short trail.
+// city is pale and warm. The cursor lights nearby windows in the brand
+// accent (terracota by day, cobre by night), leaving a short trail.
 //
 // Performance: the sky is a CSS gradient; cerros and each tower layer are
 // canvases painted once. Parallax moves them with CSS transforms (GPU
@@ -52,6 +52,8 @@ interface Palette {
   ridge: string;
   layers: [string, string];
   window: (w: Win, near: boolean, threshold: number) => string;
+  /** RGB channels of the cursor trail. */
+  trail: string;
   monserrate: boolean;
 }
 
@@ -61,41 +63,46 @@ const GLOW_RADIUS = 150;
 const rgba = (r: number, g: number, b: number, a = 1) =>
   `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a.toFixed(3)})`;
 
+// Espresso night: the sky deepens with scroll and a terracota glow
+// lingers on the horizon.
 const NIGHT: Palette = {
   sky: (p) => [
-    rgba(13 - p * 5, 34 - p * 12, 63 - p * 22),
-    rgba(22 - p * 8, 50 - p * 16, 92 - p * 26),
-    rgba(30 - p * 10, 58 - p * 18, 98 - p * 24),
+    rgba(24 - p * 8, 20 - p * 7, 18 - p * 6),
+    rgba(38 - p * 12, 30 - p * 9, 27 - p * 8),
+    rgba(52 - p * 14, 40 - p * 11, 35 - p * 9),
   ],
   glow: (p) => [
-    [0, rgba(217, 154, 43, 0.16 * (1 - p))],
-    [0.35, rgba(36, 88, 230, 0.1 + 0.08 * p)],
-    [1, rgba(36, 88, 230, 0)],
+    [0, rgba(224, 109, 68, 0.2 * (1 - p) + 0.04)],
+    [0.35, rgba(244, 162, 126, 0.07 + 0.03 * p)],
+    [1, rgba(244, 162, 126, 0)],
   ],
-  ridge: "rgb(11, 29, 55)",
-  layers: ["rgb(17, 41, 76)", "rgb(9, 25, 47)"],
+  ridge: "rgb(26, 21, 18)",
+  layers: ["rgb(42, 34, 30)", "rgb(21, 17, 15)"],
   window: (w, near, threshold) => {
     if (w.rank < threshold) {
       const a = (near ? 0.42 : 0.3) * (0.6 + w.rank);
-      return w.warm ? rgba(255, 208, 140, a) : rgba(170, 200, 255, a * 0.8);
+      return w.warm ? rgba(255, 208, 140, a) : rgba(244, 162, 126, a * 0.8);
     }
     return near ? "rgba(255, 255, 255, 0.035)" : "rgba(255, 255, 255, 0.025)";
   },
+  trail: "244, 162, 126",
   monserrate: true,
 };
 
+// Limestone day: warm haze, stone-coloured towers.
 const DAY: Palette = {
-  sky: () => ["#C3D8F2", "#DAE6F6", "#EEF3FA"],
+  sky: () => ["#DACCBF", "#E2D8CD", "#EAE3DA"],
   glow: () => [
-    [0, "rgba(255, 226, 180, 0.38)"],
-    [0.4, "rgba(255, 255, 255, 0.22)"],
-    [1, "rgba(255, 255, 255, 0)"],
+    [0, "rgba(244, 162, 126, 0.32)"],
+    [0.4, "rgba(255, 250, 245, 0.25)"],
+    [1, "rgba(255, 250, 245, 0)"],
   ],
-  ridge: "#BACADF",
-  layers: ["#C5D2E4", "#A8B9D1"],
+  ridge: "#CDBDAD",
+  layers: ["#D3C3B5", "#BFAC9B"],
   // Daylight glass: mostly darker panes, a few catching the sky.
   window: (w, near) =>
-    w.rank < 0.12 ? "rgba(255, 255, 255, 0.72)" : near ? "rgba(46, 72, 112, 0.2)" : "rgba(46, 72, 112, 0.13)",
+    w.rank < 0.12 ? "rgba(255, 255, 255, 0.72)" : near ? "rgba(24, 20, 18, 0.16)" : "rgba(24, 20, 18, 0.1)",
+  trail: "224, 109, 68",
   monserrate: false,
 };
 
@@ -173,11 +180,13 @@ export function Skyline({ className }: { className?: string }) {
   useEffect(() => {
     const root = rootRef.current;
     const ridgeCanvas = ridgeRef.current;
-    const wrappers = layerRefs.current;
+    // Copy the elements now: React clears ref slots when the hero unmounts,
+    // before this effect's cleanup runs, and a pending frame could still fire.
+    const wrappers = layerRefs.current.filter((w): w is HTMLDivElement => w !== null);
     const host = root?.parentElement;
-    if (!root || !ridgeCanvas || !host || wrappers.length < 2 || wrappers.some((w) => !w)) return;
-    const towerCanvases = wrappers.map((w) => w!.children[0] as HTMLCanvasElement);
-    const glowCanvases = wrappers.map((w) => w!.children[1] as HTMLCanvasElement);
+    if (!root || !ridgeCanvas || !host || wrappers.length < 2) return;
+    const towerCanvases = wrappers.map((w) => w.children[0] as HTMLCanvasElement);
+    const glowCanvases = wrappers.map((w) => w.children[1] as HTMLCanvasElement);
 
     const html = document.documentElement;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -288,7 +297,7 @@ export function Skyline({ className }: { className?: string }) {
     // the pointer is near, repaints the few glowing windows.
     function draw() {
       frame = 0;
-      if (!visible || !scene || W === 0) return;
+      if (!visible || !scene || W === 0 || !root!.isConnected) return;
       const level = nightLevel();
       if (level !== cacheLevel) paintLevel(level);
 
@@ -300,7 +309,7 @@ export function Skyline({ className }: { className?: string }) {
       scene.layers.forEach((layer, i) => {
         const dx = px * layer.depth * 34;
         const dy = scrollY * (0.3 - layer.depth * 0.25);
-        wrappers[i]!.style.transform = `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(1)}px, 0)`;
+        wrappers[i].style.transform = `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(1)}px, 0)`;
         if (!interactive) return;
 
         const radius = layer.depth > 0.5 ? GLOW_RADIUS : GLOW_RADIUS * 0.8;
@@ -325,7 +334,7 @@ export function Skyline({ className }: { className?: string }) {
               if (d < radius) win.glow = Math.max(win.glow, 1 - d / radius);
             }
             if (win.glow > 0.01) {
-              g.fillStyle = `rgba(16, 185, 129, ${Math.min(1, win.glow * 1.1).toFixed(3)})`;
+              g.fillStyle = `rgba(${palette.trail}, ${Math.min(1, win.glow * 1.1).toFixed(3)})`;
               g.fillRect(win.x, win.y, win.w, win.h);
               win.glow *= decay;
               lit = true;

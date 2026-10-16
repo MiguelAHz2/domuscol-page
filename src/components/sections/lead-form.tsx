@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { ChevronDown, CircleCheck, LoaderCircle } from "lucide-react";
+import { ChevronDown, CircleCheck } from "lucide-react";
 import Image from "next/image";
 import bogotaCerros from "@/assets/images/bogota-cerros.jpg";
+import { BrandLottie } from "@/components/brand/brand-lottie";
 import { buttonClass } from "@/components/ui/button";
 import { WhatsappIcon } from "@/components/ui/social-icons";
 import { Turnstile, type TurnstileHandle } from "@/components/ui/turnstile";
@@ -18,6 +19,7 @@ import {
   type DemoField,
   type DemoRequestInput,
 } from "@/lib/demo-request";
+import { trackEvent, unitsBand } from "@/lib/events";
 import { whatsappHref } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -93,6 +95,7 @@ export function LeadForm() {
       if (res.ok && body.success) {
         setConfirmationSent(body.data?.confirmation === true);
         setStatus("sent");
+        trackEvent("Solicitud de demo", { ciudad: values.ciudad, unidades: unitsBand(Number(values.unidades)) });
         return;
       }
       setStatus("idle");
@@ -189,6 +192,7 @@ export function LeadForm() {
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackEvent("WhatsApp", { origen: "tras la solicitud", pagina: "/contacto" })}
                   className={buttonClass("primary", "md")}
                 >
                   <WhatsappIcon className="h-4 w-4" />
@@ -283,11 +287,11 @@ export function LeadForm() {
                     onChange={(e) => update("autorizacion", e.target.checked)}
                     aria-invalid={Boolean(errors.autorizacion)}
                     aria-describedby={errors.autorizacion ? "autorizacion-error" : undefined}
-                    className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded accent-[rgb(var(--c-emerald))]"
+                    className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded accent-[rgb(var(--c-accent))]"
                   />
                   <span>
                     Autorizo a DomusCol a tratar mis datos para responder esta solicitud, según la{" "}
-                    <a href="/legal/tratamiento-de-datos" className="font-semibold text-cobalt underline-offset-2 hover:underline">
+                    <a href="/legal/tratamiento-de-datos" className="font-semibold text-accent-ink underline-offset-2 hover:underline">
                       Política de tratamiento de datos
                     </a>{" "}
                     y la Ley 1581 de 2012.
@@ -330,10 +334,10 @@ export function LeadForm() {
               {TURNSTILE_KEY && armed && <Turnstile ref={turnstileRef} siteKey={TURNSTILE_KEY} className="sm:col-span-2" />}
 
               <div className="sm:col-span-2">
-                <button type="submit" disabled={status === "sending"} className={buttonClass("primary", "lg", "w-full")}>
+                <button type="submit" disabled={status === "sending"} aria-busy={status === "sending"} className={buttonClass("primary", "lg", "w-full disabled:opacity-90")}>
                   {status === "sending" ? (
                     <>
-                      <LoaderCircle aria-hidden className="h-4 w-4 animate-spin" /> Enviando solicitud
+                      <BrandLottie preset="liquid-pulse" loop playOnView={false} tone="mono" className="h-6 w-6" /> Enviando solicitud
                     </>
                   ) : (
                     "Solicitar demo"
@@ -353,7 +357,7 @@ function inputClass(invalid: boolean) {
     "h-12 w-full rounded-xl border bg-surface px-4 text-[0.9375rem] text-ink shadow-pressed transition-[border-color,box-shadow] placeholder:text-muted focus:outline-none focus:ring-4",
     invalid
       ? "border-danger focus:ring-[rgb(var(--c-danger)/0.15)]"
-      : "border-line focus:border-cobalt focus:ring-[rgb(var(--c-cobalt)/0.15)]",
+      : "border-line focus:border-accent focus:ring-[rgb(var(--c-accent)/0.18)]",
   );
 }
 

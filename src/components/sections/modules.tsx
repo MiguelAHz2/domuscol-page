@@ -59,7 +59,7 @@ export function Modules() {
   const current = FILTERS.find((f) => f.id === filter)!;
 
   return (
-    <section id="modulos" aria-label="Módulos por categoría" className="bg-surface">
+    <section id="modulos" aria-label="Módulos por categoría" className="bg-section">
       {/* Floating filter: glass, because content scrolls under it */}
       <div className="pointer-events-none sticky top-[5.25rem] z-30 px-4 pt-6 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-page justify-end">
@@ -72,7 +72,7 @@ export function Modules() {
                 onClick={() => setFilter(f.id)}
                 className={cn(
                   "flex h-9 items-center gap-1.5 rounded-xl px-3 text-sm font-semibold transition-colors duration-200 sm:px-4",
-                  filter === f.id ? "bg-navy text-white dark:bg-white/15" : "text-muted hover:text-ink",
+                  filter === f.id ? "bg-espresso text-white dark:bg-white/15" : "text-muted hover:text-ink",
                 )}
               >
                 {f.label}
@@ -109,7 +109,7 @@ function Chapter({ category, filter, reverse }: { category: ModuleCategory; filt
       className="grid scroll-mt-40 items-center gap-14 border-b border-line py-16 last:border-0 sm:py-20 lg:grid-cols-2 lg:gap-20"
     >
       <div className={cn("relative pb-10", reverse && "lg:order-2")}>
-        <div className="relative aspect-[4/5] overflow-hidden rounded-[24px] bg-navy sm:aspect-[4/3]">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-[24px] bg-espresso sm:aspect-[4/3]">
           <Image
             src={photo.src}
             alt={photo.alt}
@@ -134,7 +134,7 @@ function Chapter({ category, filter, reverse }: { category: ModuleCategory; filt
       </div>
 
       <div>
-        <div className="flex items-center gap-3 text-cobalt">
+        <div className="flex items-center gap-3 text-accent-ink">
           <Icon aria-hidden className="h-5 w-5" />
           <span className="text-sm font-semibold">
             {category.features.filter((f) => f.phase === "fase-1").length} de {category.features.length} en Fase 1

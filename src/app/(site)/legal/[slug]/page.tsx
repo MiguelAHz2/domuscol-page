@@ -60,7 +60,7 @@ export default function LegalPage({ params }: { params: { slug: string } }) {
             <dd className="mt-0.5 font-semibold text-ink">{company.nit}</dd>
             <dt className="mt-3 text-muted">Datos personales</dt>
             <dd className="mt-0.5">
-              <a href={`mailto:${company.privacyEmail}`} className="break-all font-semibold text-cobalt underline-offset-2 hover:underline">
+              <a href={`mailto:${company.privacyEmail}`} className="break-all font-semibold text-accent-ink underline-offset-2 hover:underline">
                 {company.privacyEmail}
               </a>
             </dd>
@@ -79,7 +79,7 @@ export default function LegalPage({ params }: { params: { slug: string } }) {
                 ) : (
                   <ul key={j} className="mt-4 space-y-2.5 text-[1.0625rem] leading-relaxed">
                     {block.list.map((item) => (
-                      <li key={item} className="relative pl-6 before:absolute before:left-1 before:top-[0.7em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-emerald">
+                      <li key={item} className="relative pl-6 before:absolute before:left-1 before:top-[0.7em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-accent">
                         {item}
                       </li>
                     ))}

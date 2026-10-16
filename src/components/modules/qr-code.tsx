@@ -26,7 +26,7 @@ export function QrCode({ seed = 804, className }: { seed?: number; className?: s
     <svg viewBox={`-1 -1 ${SIZE + 2} ${SIZE + 2}`} aria-hidden className={className} shapeRendering="crispEdges">
       <rect x="-1" y="-1" width={SIZE + 2} height={SIZE + 2} fill="#fff" />
       <path
-        fill="#0D223F"
+        fill="#181412"
         fillRule="evenodd"
         d={`${finderPath(0, 0)}${finderPath(SIZE - 7, 0)}${finderPath(0, SIZE - 7)}${data}`}
       />

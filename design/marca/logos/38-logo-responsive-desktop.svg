@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-label="Logo responsivo DomusCol Desktop">
+  <rect width="1200" height="320" rx="24" fill="#FFFFFF"/>
+  <g transform="translate(72 16) scale(1.8)">
+    <polygon fill="#E06D44" points="28,31 76,5 76,13 28,39"/>
+    <path fill="#181412" fill-rule="evenodd" d="M28 43 L76 17 V130 H28 V43 Z M44 50 V66 H60 V50 H44 Z M44 76 V92 H60 V76 H44 Z M44 102 V118 H60 V102 H44 Z"/>
+    <path fill="#E06D44" fill-rule="evenodd" d="M86 45 L132 70 V130 H86 V45 Z M102 74 V90 H116 V74 H102 Z M102 98 V114 H116 V98 H102 Z"/>
+    <path fill="#181412" d="M22 138 H138 A4 4 0 0 1 142 142 A4 4 0 0 1 138 146 H22 A4 4 0 0 1 18 142 A4 4 0 0 1 22 138 Z"/>
+  </g>
+  <g font-family="Manrope, Inter, sans-serif">
+    <text x="404" y="174" font-size="112" font-weight="800" letter-spacing="-4" fill="#181412">Domus<tspan fill="#E06D44" font-weight="500">Col</tspan></text>
+    <rect x="410" y="204" width="40" height="4" rx="2" fill="#E06D44"/>
+    <text x="470" y="216" font-size="20" font-weight="700" letter-spacing="9" fill="#786E68">SOLUCIONES INTEGRADAS</text>
+  </g>
+</svg>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" role="img" aria-label="DomusCol Vertical — Torres Horizontales (brand)">
+  <rect width="800" height="800" rx="32" fill="#FFFFFF"/>
+  <g id="isotype" transform="translate(232, 110) scale(2.1)">
+    
+    <g id="layer-core-c">
+      <polygon fill="#E06D44" points="28,31 76,5 76,13 28,39"/>
+    </g>
+    <g id="layer-structure-d">
+      <path fill="#181412" fill-rule="evenodd" d="M28 43 L76 17 V130 H28 V43 Z M44 50 V66 H60 V50 H44 Z M44 76 V92 H60 V76 H44 Z M44 102 V118 H60 V102 H44 Z"/>
+    </g>
+    <g id="layer-roof">
+      <path fill="#E06D44" fill-rule="evenodd" d="M86 45 L132 70 V130 H86 V45 Z M102 74 V90 H116 V74 H102 Z M102 98 V114 H116 V98 H102 Z"/>
+    </g>
+    <g id="layer-keystone">
+      <path fill="#181412" d="M22 138 H138 A4 4 0 0 1 142 142 A4 4 0 0 1 138 146 H22 A4 4 0 0 1 18 142 A4 4 0 0 1 22 138 Z"/>
+    </g>
+  
+  </g>
+  <g id="wordmark" text-anchor="middle" font-family="Manrope, Inter, sans-serif">
+    <text x="400" y="575" font-size="104" font-weight="800" letter-spacing="-3.5" fill="#181412">Domus<tspan fill="#E06D44" font-weight="500">Col</tspan></text>
+    <rect x="365" y="608" width="70" height="3.5" rx="1.75" fill="#E06D44"/>
+    <text x="400" y="652" font-size="18" font-weight="700" letter-spacing="9" fill="#786E68">SOLUCIONES INTEGRADAS</text>
+  </g>
+</svg>

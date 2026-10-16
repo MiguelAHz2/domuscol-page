@@ -24,7 +24,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
             <button
               type="button"
               onClick={reset}
-              className="h-12 rounded-xl bg-emerald px-6 font-semibold text-navy-deep"
+              className="h-12 rounded-xl bg-accent px-6 font-semibold text-espresso-deep hover:bg-copper"
             >
               Intentar de nuevo
             </button>

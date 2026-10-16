@@ -20,7 +20,7 @@ export default function Home() {
               "@type": "Organization",
               name: site.name,
               url: site.url,
-              logo: `${site.url}/icon.svg`,
+              logo: `${site.url}/icons/icon-512.png`,
               email: site.salesEmail,
               areaServed: "CO",
             },

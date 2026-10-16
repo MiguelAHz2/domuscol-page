@@ -1,0 +1,40 @@
+{
+  "brand": "DomusCol",
+  "tagline": "Soluciones Integradas",
+  "selectedSymbol": "02 · Torres Horizontales",
+  "selectedPalette": "Espresso & Terracotta",
+  "colors": {
+    "primary": {
+      "espresso": "#181412",
+      "espressoElevated": "#241E1B",
+      "espressoMuted": "#3D3430"
+    },
+    "accent": {
+      "terracotta": "#E06D44",
+      "terracottaLight": "#F4A27E",
+      "terracottaDark": "#A84420"
+    },
+    "neutral": {
+      "limestone": "#F6F2EE",
+      "alabaster": "#FAF8F5",
+      "stoneBorder": "#E5DEC9",
+      "warmGray": "#786E68",
+      "white": "#FFFFFF",
+      "black": "#000000"
+    },
+    "semanticSaaS": {
+      "successPaid": "#10B981",
+      "warningPending": "#F59E0B",
+      "dangerOverdue": "#EF4444",
+      "infoNotice": "#38BDF8"
+    }
+  },
+  "typography": {
+    "fontFamily": "Manrope, sans-serif",
+    "wordmarkWeights": {
+      "domus": 800,
+      "col": 500
+    },
+    "taglineTracking": "0.35em"
+  }
+}

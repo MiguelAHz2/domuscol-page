@@ -18,6 +18,11 @@ const list = (value: string | undefined) =>
 
 const fromAddress = () => process.env.LEADS_EMAIL_FROM || "DomusCol <onboarding@resend.dev>";
 
+// Brand header for the emails: a PNG (email clients don't render SVG),
+// served from public/brand.
+const emailLogo = () =>
+  `<img src="${site.url}/brand/logo-correo.png" width="163" height="44" alt="DomusCol" style="display:block;border:0;margin:0 0 20px" />`;
+
 export const channels = {
   email: () => Boolean(process.env.RESEND_API_KEY && list(process.env.LEADS_EMAIL_TO).length),
   webhook: () => Boolean(process.env.LEADS_WEBHOOK_URL),
@@ -52,7 +57,7 @@ const table = (rows: Array<[string, string | number]>) => `
     ${rows
       .map(
         ([k, v]) =>
-          `<tr><td style="padding:8px 12px 8px 0;border-bottom:1px solid #DCE3EE;color:#5E708A;white-space:nowrap">${escapeHtml(k)}</td><td style="padding:8px 0;border-bottom:1px solid #DCE3EE;font-weight:600">${escapeHtml(v)}</td></tr>`,
+          `<tr><td style="padding:8px 12px 8px 0;border-bottom:1px solid #E5DEC9;color:#786E68;white-space:nowrap">${escapeHtml(k)}</td><td style="padding:8px 0;border-bottom:1px solid #E5DEC9;font-weight:600">${escapeHtml(v)}</td></tr>`,
       )
       .join("")}
   </table>`;
@@ -67,11 +72,12 @@ export async function sendLeadEmail(r: DemoRequest, receivedAt: string) {
     subject: `Solicitud de demo: ${r.conjunto} (${r.unidades} unidades, ${r.ciudad})`,
     text: rows.map(([k, v]) => `${k}: ${v}`).join("\n"),
     html: `
-      <div style="font-family:Arial,Helvetica,sans-serif;color:#0D223F;max-width:560px">
+      <div style="font-family:Arial,Helvetica,sans-serif;color:#181412;max-width:560px">
+        ${emailLogo()}
         <h2 style="margin:0 0 4px">Nueva solicitud de demo</h2>
-        <p style="margin:0 0 16px;color:#5E708A">Llegó desde ${escapeHtml(site.url)}/contacto</p>
+        <p style="margin:0 0 16px;color:#786E68">Llegó desde ${escapeHtml(site.url)}/contacto</p>
         ${table(rows)}
-        <p style="margin:16px 0 0;color:#5E708A">Responde a este correo para escribirle directamente a ${escapeHtml(r.nombre)}.</p>
+        <p style="margin:16px 0 0;color:#786E68">Responde a este correo para escribirle directamente a ${escapeHtml(r.nombre)}.</p>
       </div>`,
   });
 }
@@ -153,17 +159,17 @@ export async function sendConfirmation(r: DemoRequest) {
     subject: "Recibimos tu solicitud de demo de DomusCol",
     text,
     html: `
-      <div style="font-family:Arial,Helvetica,sans-serif;color:#3A4C66;max-width:560px;line-height:1.6">
-        <p style="margin:0 0 20px;font-size:20px;font-weight:700;color:#0D223F">DomusCol</p>
+      <div style="font-family:Arial,Helvetica,sans-serif;color:#3D3430;max-width:560px;line-height:1.6">
+        ${emailLogo()}
         <p style="margin:0 0 12px">Hola, ${escapeHtml(firstName)}:</p>
-        <p style="margin:0 0 12px">Recibimos tu solicitud de demo para <strong style="color:#0D223F">${escapeHtml(r.conjunto)}</strong> (${escapeHtml(r.unidades)} unidades, ${escapeHtml(r.ciudad)}).</p>
+        <p style="margin:0 0 12px">Recibimos tu solicitud de demo para <strong style="color:#181412">${escapeHtml(r.conjunto)}</strong> (${escapeHtml(r.unidades)} unidades, ${escapeHtml(r.ciudad)}).</p>
         <p style="margin:0 0 20px">Te escribimos en menos de un día hábil para agendarla: son 30 minutos, con la estructura real de tu conjunto.</p>
-        <p style="margin:0 0 28px"><a href="${escapeHtml(whatsapp)}" style="display:inline-block;background:#10B981;color:#071527;font-weight:700;text-decoration:none;padding:12px 20px;border-radius:12px">Escribir por WhatsApp</a></p>
+        <p style="margin:0 0 28px"><a href="${escapeHtml(whatsapp)}" style="display:inline-block;background:#E06D44;color:#181412;font-weight:700;text-decoration:none;padding:12px 20px;border-radius:12px">Escribir por WhatsApp</a></p>
         <p style="margin:0 0 28px">Equipo DomusCol</p>
-        <p style="margin:0;padding-top:16px;border-top:1px solid #DCE3EE;font-size:12px;color:#5E708A">
+        <p style="margin:0;padding-top:16px;border-top:1px solid #E5DEC9;font-size:12px;color:#786E68">
           Recibes este correo porque solicitaste una demo en ${escapeHtml(site.url)}. Tratamos tus datos según nuestra
-          <a href="${privacy}" style="color:#2458E6">Política de tratamiento de datos</a>. Para consultarlos, corregirlos o pedir que los eliminemos, escribe a
-          <a href="mailto:${escapeHtml(company.privacyEmail)}" style="color:#2458E6">${escapeHtml(company.privacyEmail)}</a>.
+          <a href="${privacy}" style="color:#A84420">Política de tratamiento de datos</a>. Para consultarlos, corregirlos o pedir que los eliminemos, escribe a
+          <a href="mailto:${escapeHtml(company.privacyEmail)}" style="color:#A84420">${escapeHtml(company.privacyEmail)}</a>.
         </p>
       </div>`,
   });
